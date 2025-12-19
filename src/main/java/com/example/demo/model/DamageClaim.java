@@ -2,12 +2,9 @@ package com.example.demo.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @Entity
-@Table(name = "damage_claims")
 public class DamageClaim {
 
     @Id
@@ -16,9 +13,10 @@ public class DamageClaim {
 
     private String description;
 
-    private String status;
+    private double amount;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(name = "user_id")
+    private Long userId;   // <-- Add this field
+
+    // Lombok @Data generates getters and setters automatically
 }
