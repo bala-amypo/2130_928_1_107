@@ -2,28 +2,31 @@ package com.example.demo.controller;
 
 import com.example.demo.model.DamageClaim;
 import com.example.demo.service.DamageClaimService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/claims")
-@RequiredArgsConstructor
 public class DamageClaimController {
 
-    private final DamageClaimService claimService;
+    private final DamageClaimService damageClaimService;
 
-    @PostMapping("/{userId}/file")
-    public DamageClaim fileClaim(@PathVariable Long userId, @RequestBody DamageClaim claim) {
-        return claimService.fileClaim(userId, claim);
+    public DamageClaimController(DamageClaimService damageClaimService) {
+        this.damageClaimService = damageClaimService;
     }
 
-    @GetMapping("/{id}")
-    public DamageClaim getClaim(@PathVariable Long id) {
-        return claimService.getClaim(id);
+    @PostMapping("/{userId}")
+    public ResponseEntity<DamageClaim> createClaim(@PathVariable Long userId,
+                                                   @RequestBody DamageClaim claim) {
+        DamageClaim createdClaim = damageClaimService.createClaim(userId, claim);
+        return ResponseEntity.ok(createdClaim);
     }
 
-    @GetMapping("/{id}/evaluate")
-    public String evaluateClaim(@PathVariable Long id) {
-        return claimService.evaluateClaim(id);
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<DamageClaim>> getUserClaims(@PathVariable Long userId) {
+        List<DamageClaim> claims = damageClaimService.getClaimsByUser(userId);
+        return ResponseEntity.ok(claims);
     }
 }
