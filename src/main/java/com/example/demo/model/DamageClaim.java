@@ -1,17 +1,24 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 @Entity
+@Table(name = "damage_claims")
 public class DamageClaim {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String description;
 
-    // getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    private String status;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }
