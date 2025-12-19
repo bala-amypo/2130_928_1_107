@@ -1,45 +1,27 @@
 package com.example.demo.model;
 
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
-import java.util.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity
-@Table(name = "damage_claims")
 public class DamageClaim {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String description;
 
-    @ManyToOne
-    private Parcel parcel;
-
-    private String claimDescription;
-
-    private LocalDateTime filedAt;
-
-    private String status = "PENDING";
-
-    private Double score;
-
-    @ManyToMany
-    @JoinTable(
-        name = "claim_rule_map",
-        joinColumns = @JoinColumn(name = "claim_id"),
-        inverseJoinColumns = @JoinColumn(name = "rule_id")
-    )
-    private Set<ClaimRule> appliedRules = new HashSet<>();
-
-    @OneToMany(mappedBy = "claim", cascade = CascadeType.ALL)
-    private List<Evidence> evidenceList = new ArrayList<>();
-
+    // Constructors
     public DamageClaim() {}
-
-    @PrePersist
-    void onCreate() {
-        filedAt = LocalDateTime.now();
+    public DamageClaim(String description) {
+        this.description = description;
     }
 
-    // getters & setters
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 }
