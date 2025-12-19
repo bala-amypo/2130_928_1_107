@@ -3,25 +3,22 @@ package com.example.demo.service.impl;
 import com.example.demo.model.Parcel;
 import com.example.demo.repository.ParcelRepository;
 import com.example.demo.service.ParcelService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ParcelServiceImpl implements ParcelService {
 
-    private final ParcelRepository parcelRepository;
+    private final ParcelRepository parcelRepo;
 
-    public ParcelServiceImpl(ParcelRepository parcelRepository) {
-        this.parcelRepository = parcelRepository;
+    @Override
+    public Parcel addParcel(Parcel parcel) {
+        return parcelRepo.save(parcel);
     }
 
     @Override
-    public List<Parcel> getAllParcels() {
-        return parcelRepository.findAll();
-    }
-
-    @Override
-    public Parcel saveParcel(Parcel parcel) {
-        return parcelRepository.save(parcel);
+    public Parcel getByTrackingNumber(String trackingNumber) {
+        return parcelRepo.findByTrackingNumber(trackingNumber).orElseThrow();
     }
 }

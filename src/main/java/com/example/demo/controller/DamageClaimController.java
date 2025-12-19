@@ -1,44 +1,29 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.ApiResponse;
 import com.example.demo.model.DamageClaim;
 import com.example.demo.service.DamageClaimService;
-
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Operation;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/claims")
-@Tag(name = "Damage Claims")
+@RequiredArgsConstructor
 public class DamageClaimController {
 
     private final DamageClaimService claimService;
 
-    public DamageClaimController(DamageClaimService claimService) {
-        this.claimService = claimService;
+    @PostMapping("/{userId}/file")
+    public DamageClaim fileClaim(@PathVariable Long userId, @RequestBody DamageClaim claim) {
+        return claimService.fileClaim(userId, claim);
     }
 
-    @PostMapping("/file/{parcelId}")
-    @Operation(summary = "File a damage claim")
-    public ApiResponse fileClaim(@PathVariable Long parcelId,
-                                 @RequestBody DamageClaim claim) {
-        DamageClaim saved = claimService.fileClaim(parcelId, claim);
-        return new ApiResponse(true, "Claim filed", saved);
+    @GetMapping("/{id}")
+    public DamageClaim getClaim(@PathVariable Long id) {
+        return claimService.getClaim(id);
     }
 
-    @PutMapping("/evaluate/{claimId}")
-    @Operation(summary = "Evaluate a claim")
-    public ApiResponse evaluateClaim(@PathVariable Long claimId) {
-        DamageClaim evaluated = claimService.evaluateClaim(claimId);
-        return new ApiResponse(true, "Claim evaluated", evaluated);
-    }
-
-    @GetMapping("/{claimId}")
-    @Operation(summary = "Get claim by ID")
-    public ApiResponse getClaim(@PathVariable Long claimId) {
-        DamageClaim claim = claimService.getClaim(claimId);
-        return new ApiResponse(true, "Claim found", claim);
+    @GetMapping("/{id}/evaluate")
+    public String evaluateClaim(@PathVariable Long id) {
+        return claimService.evaluateClaim(id);
     }
 }
