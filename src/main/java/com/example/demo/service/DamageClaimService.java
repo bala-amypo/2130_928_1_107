@@ -1,9 +1,9 @@
 package com.example.demo.service;
 
 import com.example.demo.model.DamageClaim;
-import java.util.List;
 
 public interface DamageClaimService {
-    List<DamageClaim> getAllClaims();
-    DamageClaim saveClaim(DamageClaim claim);
+    DamageClaim fileClaim(Long userId, DamageClaim claim);
+    DamageClaim getClaim(Long id);
+    String evaluateClaim(Long id);
 }

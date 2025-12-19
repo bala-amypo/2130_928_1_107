@@ -1,27 +1,38 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.model.DamageClaim;
+import com.example.demo.model.User;
 import com.example.demo.repository.DamageClaimRepository;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.service.DamageClaimService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class DamageClaimServiceImpl implements DamageClaimService {
 
-    private final DamageClaimRepository damageClaimRepository;
+    private final DamageClaimRepository claimRepo;
+    private final UserRepository userRepo;
 
-    public DamageClaimServiceImpl(DamageClaimRepository damageClaimRepository) {
-        this.damageClaimRepository = damageClaimRepository;
+    @Override
+    public DamageClaim fileClaim(Long userId, DamageClaim claim) {
+        User user = userRepo.findById(userId).orElseThrow();
+        claim.setUser(user);
+        claim.setStatus("PENDING");
+        return claimRepo.save(claim);
     }
 
     @Override
-    public List<DamageClaim> getAllClaims() {
-        return damageClaimRepository.findAll();
+    public DamageClaim getClaim(Long id) {
+        return claimRepo.findById(id).orElseThrow();
     }
 
     @Override
-    public DamageClaim saveClaim(DamageClaim claim) {
-        return damageClaimRepository.save(claim);
+    public String evaluateClaim(Long id) {
+        DamageClaim claim = getClaim(id);
+        claim.setStatus("APPROVED"); // Simple placeholder logic
+        claimRepo.save(claim);
+        return claim.getStatus();
     }
 }
