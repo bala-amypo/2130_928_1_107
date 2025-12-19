@@ -7,15 +7,12 @@ import jakarta.persistence.Id;
 
 @Entity
 public class ClaimRule {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String ruleName;
 
-    public ClaimRule() {}
-    public ClaimRule(String ruleName) { this.ruleName = ruleName; }
-
+    // getters and setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getRuleName() { return ruleName; }
