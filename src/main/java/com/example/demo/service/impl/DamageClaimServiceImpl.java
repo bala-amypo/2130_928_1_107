@@ -1,42 +1,35 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.model.ClaimRule;
 import com.example.demo.model.DamageClaim;
-import com.example.demo.repository.ClaimRuleRepository;
+import com.example.demo.model.User;
 import com.example.demo.repository.DamageClaimRepository;
-import com.example.demo.service.DamageClaimService;
-import com.example.demo.util.RuleEngineUtil;
-import lombok.RequiredArgsConstructor;
+import com.example.demo.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
-public class DamageClaimServiceImpl implements DamageClaimService {
+public class DamageClaimServiceImpl {
 
-    private final DamageClaimRepository claimRepository;
-    private final ClaimRuleRepository ruleRepository;
+    private final DamageClaimRepository damageClaimRepository;
+    private final UserRepository userRepository;
 
-    @Override
-    public DamageClaim fileClaim(Long userId, DamageClaim claim) {
-        claim.setUserId(userId);
-        return claimRepository.save(claim);
+    public DamageClaimServiceImpl(DamageClaimRepository damageClaimRepository,
+                                  UserRepository userRepository) {
+        this.damageClaimRepository = damageClaimRepository;
+        this.userRepository = userRepository;
     }
 
-    @Override
-    public DamageClaim getClaim(Long claimId) {
-        return claimRepository.findById(claimId)
-                .orElseThrow(() -> new RuntimeException("Claim not found"));
+    public DamageClaim createClaim(Long userId, DamageClaim claim) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        claim.setUser(user);
+        return damageClaimRepository.save(claim);
     }
 
-    @Override
-    public String evaluateClaim(Long claimId) {
-        DamageClaim claim = getClaim(claimId);
-        List<ClaimRule> rules = ruleRepository.findAll();
-
-        double score = RuleEngineUtil.evaluateRules(claim.getDescription(), rules);
-
-        return score > 5 ? "Approved" : "Rejected";  // simple scoring threshold
+    public List<DamageClaim> getClaimsByUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return user.getClaims();
     }
 }
