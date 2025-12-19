@@ -2,9 +2,7 @@ package com.example.demo.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
-import io.swagger.v3.oas.models.security.SecurityScheme;
-
+import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,19 +10,12 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
 
     @Bean
-    public OpenAPI openAPI() {
-
-        SecurityScheme bearerAuth = new SecurityScheme()
-                .type(SecurityScheme.Type.HTTP)
-                .scheme("bearer")
-                .bearerFormat("JWT");
-
+    public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Parcel Damage Claim Validator API")
+                        .title("Demo API")
                         .version("1.0")
-                        .description("API documentation for Parcel Damage Claim Validator"))
-                .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
-                .schemaRequirement("Bearer Authentication", bearerAuth);
+                        .description("Demo project APIs"))
+                .addServersItem(new Server().url("https://9332.pro604cr.amypo.ai/"));
     }
 }
