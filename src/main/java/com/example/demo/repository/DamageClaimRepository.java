@@ -3,4 +3,8 @@ package com.example.demo.repository;
 import com.example.demo.model.DamageClaim;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DamageClaimRepository extends JpaRepository<DamageClaim, Long> {}
+import java.util.List;
+
+public interface DamageClaimRepository extends JpaRepository<DamageClaim, Long> {
+    List<DamageClaim> findByUserId(Long userId);
+}
