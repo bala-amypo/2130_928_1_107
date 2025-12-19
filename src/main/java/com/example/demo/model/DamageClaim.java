@@ -1,22 +1,9 @@
-package com.example.demo.model;
+package com.example.demo.service;
 
-import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.example.demo.model.DamageClaim;
+import java.util.List;
 
-@Data
-@NoArgsConstructor
-@Entity
-@Table(name = "damage_claims")
-public class DamageClaim {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String description;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+public interface DamageClaimService {
+    DamageClaim createClaim(Long userId, DamageClaim claim);
+    List<DamageClaim> getClaimsByUser(Long userId);
 }
