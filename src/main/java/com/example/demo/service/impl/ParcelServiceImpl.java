@@ -3,22 +3,25 @@ package com.example.demo.service.impl;
 import com.example.demo.model.Parcel;
 import com.example.demo.repository.ParcelRepository;
 import com.example.demo.service.ParcelService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class ParcelServiceImpl implements ParcelService {
 
-    private final ParcelRepository parcelRepo;
+    private final ParcelRepository parcelRepository;
+
+    public ParcelServiceImpl(ParcelRepository parcelRepository) {
+        this.parcelRepository = parcelRepository;
+    }
 
     @Override
     public Parcel addParcel(Parcel parcel) {
-        return parcelRepo.save(parcel);
+        return parcelRepository.save(parcel); // 🔥 REQUIRED
     }
 
     @Override
     public Parcel getByTrackingNumber(String trackingNumber) {
-        return parcelRepo.findByTrackingNumber(trackingNumber).orElseThrow();
+        return parcelRepository.findByTrackingNumber(trackingNumber)
+                .orElseThrow(() -> new RuntimeException("Parcel not found"));
     }
 }
