@@ -14,13 +14,13 @@ public class ClaimRuleController {
 
     private final ClaimRuleRepository repository;
 
-    // ✅ POST
+    
     @PostMapping
     public ClaimRule createRule(@RequestBody ClaimRule rule) {
         return repository.save(rule);
     }
 
-    // ✅ GET
+    
     @GetMapping
     public List<ClaimRule> getAllRules() {
         return repository.findAll();

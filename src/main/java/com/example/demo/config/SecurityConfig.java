@@ -53,7 +53,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/auth/**",
-                                "/parcels/**",     // ✅ ALLOW PARCEL APIs
+                                "/parcels/**",     
                                 "/rules/**",
                                 "/claims/**",
                                 "/evidence/**",

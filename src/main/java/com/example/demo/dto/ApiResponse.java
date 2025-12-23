@@ -10,5 +10,5 @@ public class ApiResponse {
         this.message = message;
         this.data = data;
     }
-    // getters
+    
 }
