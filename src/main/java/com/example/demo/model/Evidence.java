@@ -20,12 +20,7 @@ public class Evidence {
 
     private String url;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "claim_id")
     private DamageClaim claim;
-
-    // ✅ ADD THIS
-    public void setClaim(DamageClaim claim) {
-        this.claim = claim;
-    }
 }
