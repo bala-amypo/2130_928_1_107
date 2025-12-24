@@ -20,7 +20,6 @@ public class DamageClaimServiceImpl implements DamageClaimService {
     private final DamageClaimRepository claimRepository;
     private final ClaimRuleRepository ruleRepository;
 
-    // REQUIRED constructor
     public DamageClaimServiceImpl(
             ParcelRepository parcelRepository,
             DamageClaimRepository claimRepository,
@@ -39,6 +38,7 @@ public class DamageClaimServiceImpl implements DamageClaimService {
 
         claim.setParcel(parcel);
         claim.setStatus("PENDING");
+        // ❗ DO NOT set score here (must stay null)
 
         return claimRepository.save(claim);
     }
@@ -51,12 +51,12 @@ public class DamageClaimServiceImpl implements DamageClaimService {
 
         List<ClaimRule> rules = ruleRepository.findAll();
 
-        double score = RuleEngineUtil.evaluate(claim, rules);
-        claim.setScore(score);
+        // ✅ RuleEngine returns boolean, sets score internally
+        boolean approved = RuleEngineUtil.evaluate(claim, rules);
 
-        if (score > 0.9) {
+        if (approved) {
             claim.setStatus("APPROVED");
-        } else if (score == 0.0) {
+        } else {
             claim.setStatus("REJECTED");
         }
 
