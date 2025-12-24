@@ -16,7 +16,6 @@ public class Evidence {
     @ManyToOne
     private DamageClaim claim;
 
-    // ✅ MUST be auto generated
     private LocalDateTime uploadedAt;
 
     @PrePersist
@@ -24,5 +23,29 @@ public class Evidence {
         this.uploadedAt = LocalDateTime.now();
     }
 
-    // getters & setters
+    // ===== GETTERS & SETTERS =====
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getFileUrl() {
+        return fileUrl;
+    }
+ 
+    public void setFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
+    }
+
+    public DamageClaim getClaim() {
+        return claim;
+    }
+
+    public void setClaim(DamageClaim claim) {
+        this.claim = claim;
+    }
+
+    public LocalDateTime getUploadedAt() {
+        return uploadedAt;
+    }
 }

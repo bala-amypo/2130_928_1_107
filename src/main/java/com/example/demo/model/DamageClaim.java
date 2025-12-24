@@ -18,7 +18,7 @@ public class DamageClaim {
 
     private String description;
 
-    // ✅ MUST BE NULL INITIALLY
+    // MUST start as NULL
     private Double score;
 
     private String status;
@@ -34,8 +34,51 @@ public class DamageClaim {
         if (this.status == null) {
             this.status = "PENDING";
         }
-        // ❌ DO NOT initialize score here
     }
 
-    // getters & setters
+    // ===== GETTERS & SETTERS =====
+
+    public Long getId() {
+        return id;
+    }
+
+    public Parcel getParcel() {
+        return parcel;
+    }
+
+    public void setParcel(Parcel parcel) {
+        this.parcel = parcel;
+    }
+
+    public String getClaimDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Double getScore() {
+        return score;
+    }
+
+    public void setScore(Double score) {
+        this.score = score;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+ 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Set<ClaimRule> getAppliedRules() {
+        return appliedRules;
+    }
+
+    public void setAppliedRules(Set<ClaimRule> appliedRules) {
+        this.appliedRules = appliedRules;
+    }
 }

@@ -3,62 +3,37 @@ package com.example.demo.util;
 import com.example.demo.model.ClaimRule;
 import com.example.demo.model.DamageClaim;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class RuleEngineUtil {
 
-    // Used DIRECTLY by test cases
-    public static double computeScore(String description, List<ClaimRule> rules) {
+    public static boolean evaluate(DamageClaim claim, List<ClaimRule> rules) {
 
-        if (rules == null || rules.isEmpty()) {
-            return 0.0;
+        if (claim == null || claim.getClaimDescription() == null || rules == null) {
+            return false;
         }
 
-        double score = 0.0;
+        double totalScore = 0;
 
         for (ClaimRule rule : rules) {
-
-            String condition = rule.getConditionExpression();
-            double weight = rule.getWeight();
-
-            if (condition == null) continue;
-
-            if ("always".equalsIgnoreCase(condition)) {
-                score += weight;
+            if ("ALWAYS".equalsIgnoreCase(rule.getExpression())) {
+                totalScore += rule.getWeight();
+                claim.getAppliedRules().add(rule);
             }
-            else if (condition.startsWith("description_contains:")) {
-                if (description == null) continue;
-
-                String keyword = condition.substring("description_contains:".length());
-                if (description.toLowerCase().contains(keyword.toLowerCase())) {
-                    score += weight;
-                }
+            if (claim.getClaimDescription().contains(rule.getExpression())) {
+                totalScore += rule.getWeight();
+                claim.getAppliedRules().add(rule);
             }
         }
 
-        return Math.min(1.0, score);
-    }
+        claim.setScore(totalScore);
 
-    // Used by DamageClaimServiceImpl
-    public static double evaluate(DamageClaim claim, List<ClaimRule> rules) {
-
-        double score = computeScore(
-                claim.getClaimDescription(),
-                rules
-        );
-
-        Set<ClaimRule> applied = new HashSet<>();
-
-        for (ClaimRule rule : rules) {
-            applied.add(rule);
+        if (totalScore > 0.5) {
+            claim.setStatus("APPROVED");
+            return true;
         }
 
-        claim.setScore(score);
-        claim.getAppliedRules().clear();
-        claim.getAppliedRules().addAll(applied);
-
-        return score;
+        claim.setStatus("REJECTED");
+        return false;
     }
 }
