@@ -1,28 +1,62 @@
 package com.example.demo.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "claim_rule")
+@Table(name = "claim_rules")
 public class ClaimRule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String keyword;
-    private int weight;
+    private String ruleName;
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    private String conditionExpression;
 
-    public String getKeyword() { return keyword; }
-    public void setKeyword(String keyword) { this.keyword = keyword; }
+    private Double weight;
 
-    public int getWeight() { return weight; }
-    public void setWeight(int weight) { this.weight = weight; }
+    @ManyToMany(mappedBy = "appliedRules")
+    private Set<DamageClaim> claims = new HashSet<>();
+
+    public ClaimRule() {
+    }
+
+    public ClaimRule(String ruleName, String conditionExpression, Double weight) {
+        this.ruleName = ruleName;
+        this.conditionExpression = conditionExpression;
+        this.weight = weight;
+    }
+
+    // getters & setters
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getRuleName() {
+        return ruleName;
+    }
+
+    public void setRuleName(String ruleName) {
+        this.ruleName = ruleName;
+    }
+
+    public String getConditionExpression() {
+        return conditionExpression;
+    }
+
+    public void setConditionExpression(String conditionExpression) {
+        this.conditionExpression = conditionExpression;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
+    }
 }
