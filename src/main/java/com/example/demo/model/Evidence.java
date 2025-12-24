@@ -11,54 +11,18 @@ public class Evidence {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
-    private DamageClaim claim;
-
-    private String evidenceType;
-
     private String fileUrl;
 
+    @ManyToOne
+    private DamageClaim claim;
+
+    // ✅ MUST be auto generated
     private LocalDateTime uploadedAt;
 
-    public Evidence() {
-    }
-
     @PrePersist
-    public void prePersist() {
+    public void onUpload() {
         this.uploadedAt = LocalDateTime.now();
     }
 
     // getters & setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public DamageClaim getClaim() {
-        return claim;
-    }
-
-    public void setClaim(DamageClaim claim) {
-        this.claim = claim;
-    }
-
-    public String getEvidenceType() {
-        return evidenceType;
-    }
-
-    public void setEvidenceType(String evidenceType) {
-        this.evidenceType = evidenceType;
-    }
-
-    public String getFileUrl() {
-        return fileUrl;
-    }
-
-    public void setFileUrl(String fileUrl) {
-        this.fileUrl = fileUrl;
-    }
-
-    public LocalDateTime getUploadedAt() {
-        return uploadedAt;
-    }
 }

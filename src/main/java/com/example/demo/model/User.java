@@ -3,48 +3,28 @@ package com.example.demo.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(
-    name = "users",
-    uniqueConstraints = @UniqueConstraint(columnNames = "email")
-)
+@Table(name = "users")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-
-    @Column(nullable = false, unique = true)
     private String email;
-
-    @Column(nullable = false)
     private String password;
-
     private String role;
 
-    public User() {
+    @PrePersist
+    public void onCreate() {
+        if (this.role == null) {
+            this.role = "AGENT";
+        }
     }
 
-    public User(String name, String email, String password, String role) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-    }
-
-    // getters & setters
+    // ===== GETTERS & SETTERS =====
 
     public Long getId() {
         return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public void setId(Long id) {
