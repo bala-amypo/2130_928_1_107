@@ -1,62 +1,48 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
-@Table(name = "claim_rules")
+@Table(name = "claim_rule")
 public class ClaimRule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String ruleName;
+    private String name;
 
-    private String conditionExpression;
+    private String expression;
 
-    private Double weight;
+    private double weight;
 
-    @ManyToMany(mappedBy = "appliedRules")
-    private Set<DamageClaim> claims = new HashSet<>();
-
-    public ClaimRule() {
-    }
-
-    public ClaimRule(String ruleName, String conditionExpression, Double weight) {
-        this.ruleName = ruleName;
-        this.conditionExpression = conditionExpression;
-        this.weight = weight;
-    }
-
-    // getters & setters
+    // ===== GETTERS & SETTERS =====
 
     public Long getId() {
         return id;
     }
 
-    public String getRuleName() {
-        return ruleName;
+    public String getName() {
+        return name;
+    }
+ 
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setRuleName(String ruleName) {
-        this.ruleName = ruleName;
+    public String getExpression() {
+        return expression;
     }
 
-    public String getConditionExpression() {
-        return conditionExpression;
+    public void setExpression(String expression) {
+        this.expression = expression;
     }
 
-    public void setConditionExpression(String conditionExpression) {
-        this.conditionExpression = conditionExpression;
-    }
-
-    public Double getWeight() {
+    public double getWeight() {
         return weight;
     }
 
-    public void setWeight(Double weight) {
+    public void setWeight(double weight) {
         this.weight = weight;
     }
 }

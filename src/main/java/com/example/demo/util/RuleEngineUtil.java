@@ -13,22 +13,24 @@ public class RuleEngineUtil {
             return false;
         }
 
-        double totalScore = 0;
+        double totalScore = 0.0;
 
         for (ClaimRule rule : rules) {
+
             if ("ALWAYS".equalsIgnoreCase(rule.getExpression())) {
                 totalScore += rule.getWeight();
                 claim.getAppliedRules().add(rule);
             }
-            if (claim.getClaimDescription().contains(rule.getExpression())) {
+            else if (claim.getClaimDescription().contains(rule.getExpression())) {
                 totalScore += rule.getWeight();
                 claim.getAppliedRules().add(rule);
             }
         }
 
+        // IMPORTANT: score must be NULL before evaluation
         claim.setScore(totalScore);
 
-        if (totalScore > 0.5) {
+        if (totalScore > 0) {
             claim.setStatus("APPROVED");
             return true;
         }
