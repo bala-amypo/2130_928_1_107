@@ -1,11 +1,8 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
 @Entity
 @Table(name = "evidence")
 public class Evidence {
@@ -14,13 +11,54 @@ public class Evidence {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String fileName;
-
-    private String fileType;
-
-    private String url;
-
     @ManyToOne(optional = false)
-    @JoinColumn(name = "claim_id")
     private DamageClaim claim;
+
+    private String evidenceType;
+
+    private String fileUrl;
+
+    private LocalDateTime uploadedAt;
+
+    public Evidence() {
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.uploadedAt = LocalDateTime.now();
+    }
+
+    // getters & setters
+
+    public Long getId() {
+        return id;
+    }
+
+    public DamageClaim getClaim() {
+        return claim;
+    }
+
+    public void setClaim(DamageClaim claim) {
+        this.claim = claim;
+    }
+
+    public String getEvidenceType() {
+        return evidenceType;
+    }
+
+    public void setEvidenceType(String evidenceType) {
+        this.evidenceType = evidenceType;
+    }
+
+    public String getFileUrl() {
+        return fileUrl;
+    }
+
+    public void setFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
+    }
+
+    public LocalDateTime getUploadedAt() {
+        return uploadedAt;
+    }
 }
