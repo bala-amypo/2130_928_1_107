@@ -2,23 +2,25 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Parcel;
 import com.example.demo.service.ParcelService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/parcels")
-@RequiredArgsConstructor
 public class ParcelController {
 
     private final ParcelService parcelService;
+
+    public ParcelController(ParcelService parcelService) {
+        this.parcelService = parcelService;
+    }
 
     @PostMapping
     public Parcel addParcel(@RequestBody Parcel parcel) {
         return parcelService.addParcel(parcel);
     }
 
-    @GetMapping("/{trackingNumber}")
-    public Parcel getParcel(@PathVariable String trackingNumber) {
+    @GetMapping("/tracking/{trackingNumber}")
+    public Parcel getByTracking(@PathVariable String trackingNumber) {
         return parcelService.getByTrackingNumber(trackingNumber);
     }
 }
