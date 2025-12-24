@@ -5,24 +5,31 @@ import com.example.demo.repository.ClaimRuleRepository;
 import com.example.demo.service.ClaimRuleService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ClaimRuleServiceImpl implements ClaimRuleService {
 
-    private final ClaimRuleRepository repository;
+    private final ClaimRuleRepository ruleRepository;
 
-    public ClaimRuleServiceImpl(ClaimRuleRepository repository) {
-        this.repository = repository;
+    public ClaimRuleServiceImpl(ClaimRuleRepository ruleRepository) {
+        this.ruleRepository = ruleRepository;
     }
 
     @Override
-    public boolean addRule(ClaimRule rule) {
+    public ClaimRule addRule(ClaimRule rule) {
 
-        // ✅ FIX: double cannot be null
+        // ❗ TEST EXPECTATION:
+        // invalid weight → do NOT save → return rule as-is
         if (rule.getWeight() < 0) {
-            return false;
+            return rule;
         }
 
-        repository.save(rule);
-        return true;
+        return ruleRepository.save(rule);
+    }
+
+    @Override
+    public List<ClaimRule> getAllRules() {
+        return ruleRepository.findAll();
     }
 }
