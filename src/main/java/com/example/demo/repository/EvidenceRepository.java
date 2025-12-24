@@ -6,5 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface EvidenceRepository extends JpaRepository<Evidence, Long> {
-    List<Evidence> findByClaimId(Long claimId);
+
+    long countByClaim_Id(Long claimId);
+
+    List<Evidence> findByClaim_Id(Long claimId);
 }
