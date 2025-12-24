@@ -1,10 +1,3 @@
-package com.example.demo.model;
-
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-
 @Entity
 @Table(name = "damage_claims")
 public class DamageClaim {
@@ -27,9 +20,6 @@ public class DamageClaim {
     @ManyToMany
     private Set<ClaimRule> appliedRules = new HashSet<>();
 
-    @OneToMany(mappedBy = "claim")
-    private Set<Evidence> evidence = new HashSet<>();
-
     public DamageClaim() {}
 
     @PrePersist
@@ -41,10 +31,31 @@ public class DamageClaim {
         return id;
     }
 
-    // REQUIRED BY TESTS
-    public void setId(Long id) {
+    public void setId(Long id) {   // REQUIRED by tests
         this.id = id;
     }
 
-    // getters & setters for other fields...
+    public void setParcel(Parcel parcel) {
+        this.parcel = parcel;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setScore(Double score) {
+        this.score = score;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public Double getScore() {
+        return score;
+    }
+
+    public String getClaimDescription() {
+        return claimDescription;
+    }
 }
