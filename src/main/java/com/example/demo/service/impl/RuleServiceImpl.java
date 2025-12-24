@@ -17,7 +17,7 @@ public class RuleServiceImpl implements RuleService {
     @Override
     public boolean addRule(ClaimRule rule) {
 
-        // TEST EXPECTS TRUE FOR INVALID WEIGHT
+        //  TEST EXPECTS TRUE FOR INVALID WEIGHT
         if (rule.getWeight() < 0 || rule.getWeight() > 1) {
             return true;
         }
