@@ -18,7 +18,11 @@ public class Evidence {
 
     private LocalDateTime uploadedAt;
 
-    // ✅ FIX: generate timestamp only if missing
+    // ✅ FIX: constructor timestamp (tests create manually)
+    public Evidence() {
+        this.uploadedAt = LocalDateTime.now();
+    }
+
     @PrePersist
     public void onUpload() {
         if (this.uploadedAt == null) {
@@ -26,29 +30,13 @@ public class Evidence {
         }
     }
 
-    // ===== GETTERS & SETTERS =====
+    public Long getId() { return id; }
 
-    public Long getId() {
-        return id;
-    }
+    public String getFileUrl() { return fileUrl; }
+    public void setFileUrl(String fileUrl) { this.fileUrl = fileUrl; }
 
-    public String getFileUrl() {
-        return fileUrl;
-    }
+    public DamageClaim getClaim() { return claim; }
+    public void setClaim(DamageClaim claim) { this.claim = claim; }
 
-    public void setFileUrl(String fileUrl) {
-        this.fileUrl = fileUrl;
-    }
-
-    public DamageClaim getClaim() {
-        return claim;
-    }
-
-    public void setClaim(DamageClaim claim) {
-        this.claim = claim;
-    }
-
-    public LocalDateTime getUploadedAt() {
-        return uploadedAt;
-    }
+    public LocalDateTime getUploadedAt() { return uploadedAt; }
 }

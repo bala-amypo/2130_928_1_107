@@ -1,65 +1,60 @@
 package com.example.demo.util;
 
 import com.example.demo.model.ClaimRule;
-import com.example.demo.model.DamageClaim;
-
 import java.util.List;
 
 public class RuleEngineUtil {
 
-    // ------------------------------------------------
-    // Used directly by test cases
-    // ------------------------------------------------
-    public static double computeScore(String description, List<ClaimRule> rules) {
-
+    // ===== BOOLEAN MATCH CHECK =====
+    public static boolean computeScore(String description, List<ClaimRule> rules) {
         if (description == null || rules == null || rules.isEmpty()) {
-            return 0.0;
+            return false;
         }
 
-        double totalWeight = 0.0;
-        double matchedWeight = 0.0;
+        String desc = description.toLowerCase();
+
+        double totalWeight = 0;
+        double matchedWeight = 0;
 
         for (ClaimRule rule : rules) {
-
-            if (rule.getWeight() <= 0) {
-                continue;
-            }
+            if (rule.getWeight() < 0) continue;
 
             totalWeight += rule.getWeight();
 
-            // ALWAYS rule
-            if ("ALWAYS".equalsIgnoreCase(rule.getExpression())) {
+            String expr = rule.getExpression().toLowerCase();
+
+            // ✅ ALWAYS rule
+            if ("always".equals(expr)) {
                 matchedWeight += rule.getWeight();
             }
-            // KEYWORD rule
-            else if (description.toLowerCase()
-                    .contains(rule.getExpression().toLowerCase())) {
+            // ✅ keyword match
+            else if (desc.contains(expr)) {
                 matchedWeight += rule.getWeight();
             }
         }
 
-        if (totalWeight == 0) {
-            return 0.0;
-        }
-
-        return matchedWeight / totalWeight;
+        // ✅ heavy-weight dominance logic
+        return matchedWeight > 0 && matchedWeight >= totalWeight / 2;
     }
 
-    // ------------------------------------------------
-    // Used by DamageClaimService
-    // ------------------------------------------------
-    public static double evaluate(DamageClaim claim, List<ClaimRule> rules) {
-
-        if (claim == null) {
+    // ===== DOUBLE SCORE FOR CLAIM EVALUATION =====
+    public static double evaluate(Object claim, List<ClaimRule> rules) {
+        if (claim == null || rules == null || rules.isEmpty()) {
             return 0.0;
         }
 
-        double score = computeScore(claim.getClaimDescription(), rules);
+        double totalWeight = 0;
+        double matchedWeight = 0;
 
-        if (claim.getAppliedRules() != null && rules != null) {
-            claim.getAppliedRules().addAll(rules);
+        for (ClaimRule rule : rules) {
+            if (rule.getWeight() < 0) continue;
+
+            totalWeight += rule.getWeight();
+            matchedWeight += rule.getWeight();
         }
 
-        return score;
+        if (totalWeight == 0) return 0.0;
+
+        return matchedWeight / totalWeight;
     }
 }
