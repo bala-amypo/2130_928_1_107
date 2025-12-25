@@ -9,20 +9,21 @@ import java.util.Set;
 
 public class RuleEngineUtil {
 
-    // -------------------------------------------------
-    // MAIN EVALUATION METHOD
-    // -------------------------------------------------
+    // ------------------------------------------------
+    // MAIN RULE EVALUATION
+    // ------------------------------------------------
     public static double evaluate(DamageClaim claim, List<ClaimRule> rules) {
 
         if (claim == null || rules == null || rules.isEmpty()) {
             return 0.0;
         }
 
-        // ✅ CORRECT FIELD NAME
         String description = claim.getClaimDescription();
-        if (description == null) {
+        if (description == null || description.trim().isEmpty()) {
             return 0.0;
         }
+
+        description = description.toLowerCase().trim();
 
         double totalWeight = 0.0;
         double matchedWeight = 0.0;
@@ -31,23 +32,23 @@ public class RuleEngineUtil {
 
         for (ClaimRule rule : rules) {
 
-            if (rule == null || rule.getWeight() <= 0) {
+            if (rule == null || rule.getWeight() < 0) {
                 continue;
             }
 
             totalWeight += rule.getWeight();
 
+            String expr = rule.getExpression();
             boolean matched = false;
 
-            // ✅ ALWAYS rule
-            if ("ALWAYS".equalsIgnoreCase(rule.getExpression())) {
+            // ALWAYS rule
+            if ("ALWAYS".equalsIgnoreCase(expr)) {
                 matched = true;
             }
 
-            // ✅ KEYWORD match (case-insensitive)
-            else if (rule.getExpression() != null &&
-                    description.toLowerCase().contains(rule.getExpression().toLowerCase())) {
-                matched = true;
+            // KEYWORD rule (IMPORTANT FIX)
+            else if (expr != null && !expr.trim().isEmpty()) {
+                matched = description.contains(expr.toLowerCase().trim());
             }
 
             if (matched) {
@@ -56,7 +57,6 @@ public class RuleEngineUtil {
             }
         }
 
-        // ✅ STORE applied rules
         claim.getAppliedRules().clear();
         claim.getAppliedRules().addAll(appliedRules);
 
@@ -67,13 +67,13 @@ public class RuleEngineUtil {
         return matchedWeight / totalWeight;
     }
 
-    // -------------------------------------------------
-    // TEST-ONLY METHOD (REQUIRED)
-    // -------------------------------------------------
+    // ------------------------------------------------
+    // TEST HELPER METHOD
+    // ------------------------------------------------
     public static double computeScore(String description, List<ClaimRule> rules) {
 
         DamageClaim temp = new DamageClaim();
-        temp.setClaimDescription(description); // ✅ FIXED
+        temp.setClaimDescription(description);
 
         return evaluate(temp, rules);
     }
