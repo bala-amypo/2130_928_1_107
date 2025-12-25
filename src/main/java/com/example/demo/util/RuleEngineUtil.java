@@ -7,44 +7,54 @@ import java.util.List;
 
 public class RuleEngineUtil {
 
-    // USED BY MANY TESTS
-    public static double computeScore(String description, List<?> rules) {
+    // --------------------------------------------------
+    // Used by MANY TESTS
+    // --------------------------------------------------
+    public static double computeScore(String description, List<ClaimRule> rules) {
 
         if (description == null || rules == null || rules.isEmpty()) {
             return 0.0;
         }
 
-        double total = 0.0;
-
-        for (Object obj : rules) {
-            if (obj instanceof ClaimRule rule) {
-                if (description.toLowerCase()
-                        .contains(rule.getExpression().toLowerCase())) {
-                    total += rule.getWeight();
-                }
-            }
-        }
-        return total;
-    }
-
-    // USED BY SERVICE
-    public static double evaluate(DamageClaim claim, List<ClaimRule> rules) {
-
-        if (claim == null || claim.getClaimDescription() == null) {
-            return 0.0;
-        }
-
-        double score = computeScore(
-                claim.getClaimDescription(), rules);
-
-        claim.getAppliedRules().clear();
+        double totalWeight = 0.0;
+        double matchedWeight = 0.0;
 
         for (ClaimRule rule : rules) {
-            if (claim.getClaimDescription()
-                    .toLowerCase()
-                    .contains(rule.getExpression().toLowerCase())) {
-                claim.getAppliedRules().add(rule);
+
+            if (rule.getWeight() <= 0) {
+                continue;
             }
+
+            totalWeight += rule.getWeight();
+
+            // ALWAYS rule
+            if ("ALWAYS".equalsIgnoreCase(rule.getExpression())) {
+                matchedWeight += rule.getWeight();
+            }
+
+            // KEYWORD rule
+            else if (description.toLowerCase()
+                    .contains(rule.getExpression().toLowerCase())) {
+                matchedWeight += rule.getWeight();
+            }
+        }
+
+        if (totalWeight == 0) return 0.0;
+
+        return matchedWeight / totalWeight;
+    }
+
+    // --------------------------------------------------
+    // Used by DamageClaimService
+    // --------------------------------------------------
+    public static double evaluate(DamageClaim claim, List<ClaimRule> rules) {
+
+        if (claim == null) return 0.0;
+
+        double score = computeScore(claim.getClaimDescription(), rules);
+
+        if (claim.getAppliedRules() != null) {
+            claim.getAppliedRules().addAll(rules);
         }
 
         return score;
