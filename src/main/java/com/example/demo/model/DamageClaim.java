@@ -1,7 +1,8 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class DamageClaim {
@@ -12,9 +13,9 @@ public class DamageClaim {
 
     private String claimDescription;
 
-    private String status = "PENDING";
+    private String status;
 
-    private Double score = null;
+    private Double score;
 
     @ManyToOne
     private Parcel parcel;
@@ -22,29 +23,55 @@ public class DamageClaim {
     @ManyToMany
     private Set<ClaimRule> appliedRules = new HashSet<>();
 
-    public DamageClaim() {}
+    public DamageClaim() {
+        // IMPORTANT: default status
+        this.status = "PENDING";
+    }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    // ================= GETTERS & SETTERS =================
 
-    public String getClaimDescription() { return claimDescription; }
+    public Long getId() {
+        return id;
+    }
+
+    public String getClaimDescription() {
+        return claimDescription;
+    }
+
     public void setClaimDescription(String claimDescription) {
         this.claimDescription = claimDescription;
     }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public String getStatus() {
+        return status;
+    }
 
-    public Double getScore() { return score; }
-    public void setScore(Double score) { this.score = score; }
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-    public Parcel getParcel() { return parcel; }
-    public void setParcel(Parcel parcel) { this.parcel = parcel; }
+    public Double getScore() {
+        return score;
+    }
+
+    public void setScore(Double score) {
+        this.score = score;
+    }
+
+    public Parcel getParcel() {
+        return parcel;
+    }
+
+    public void setParcel(Parcel parcel) {
+        this.parcel = parcel;
+    }
 
     public Set<ClaimRule> getAppliedRules() {
-        if (appliedRules == null) {
-            appliedRules = new HashSet<>();
-        }
         return appliedRules;
+    }
+
+    // 🔥 THIS IS WHAT WAS MISSING
+    public void setAppliedRules(Set<ClaimRule> appliedRules) {
+        this.appliedRules = appliedRules;
     }
 }
