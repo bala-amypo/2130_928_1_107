@@ -9,70 +9,71 @@ import java.util.Set;
 
 public class RuleEngineUtil {
 
-    // Used by service
+    // ----------------------------
+    // MAIN EVALUATION METHOD
+    // ----------------------------
     public static double evaluate(DamageClaim claim, List<ClaimRule> rules) {
-        if (claim == null) return 0.0;
-        return computeScore(claim.getClaimDescription(), rules, claim);
-    }
 
-    // Used by tests
-    public static double computeScore(String description, List<?> rules) {
-        return computeScore(description, (List<ClaimRule>) rules, null);
-    }
+        if (claim == null || rules == null || rules.isEmpty()) {
+            return 0.0;
+        }
 
-    private static double computeScore(
-            String description,
-            List<ClaimRule> rules,
-            DamageClaim claim
-    ) {
-
-        if (rules == null || rules.isEmpty()) return 0.0;
-        if (description == null) description = "";
-
-        description = description.toLowerCase();
-
-        String[] words = description.split("\\s+");
+        String description = claim.getDescription();
+        if (description == null) {
+            return 0.0;
+        }
 
         double totalWeight = 0.0;
         double matchedWeight = 0.0;
 
-        Set<ClaimRule> applied = new HashSet<>();
+        Set<ClaimRule> appliedRules = new HashSet<>();
 
         for (ClaimRule rule : rules) {
-            if (rule == null || rule.getWeight() <= 0) continue;
+
+            if (rule == null || rule.getWeight() <= 0) {
+                continue;
+            }
 
             totalWeight += rule.getWeight();
 
-            String expr = rule.getExpression();
-            if (expr == null) continue;
-
-            expr = expr.toLowerCase();
-
             boolean matched = false;
 
-            if ("always".equals(expr)) {
+            // ✅ ALWAYS rule
+            if ("ALWAYS".equalsIgnoreCase(rule.getExpression())) {
                 matched = true;
-            } else {
-                for (String word : words) {
-                    if (word.contains(expr)) {
-                        matched = true;
-                        break;
-                    }
-                }
+            }
+
+            // ✅ KEYWORD match (case-insensitive contains)
+            else if (rule.getExpression() != null &&
+                     description.toLowerCase().contains(rule.getExpression().toLowerCase())) {
+                matched = true;
             }
 
             if (matched) {
                 matchedWeight += rule.getWeight();
-                applied.add(rule);
+                appliedRules.add(rule);
             }
         }
 
-        if (claim != null) {
-            claim.setAppliedRules(applied);
+        // ✅ store applied rules
+        claim.getAppliedRules().clear();
+        claim.getAppliedRules().addAll(appliedRules);
+
+        if (totalWeight == 0.0) {
+            return 0.0;
         }
 
-        if (totalWeight == 0) return 0.0;
-
         return matchedWeight / totalWeight;
+    }
+
+    // ----------------------------
+    // TEST-ONLY METHOD
+    // ----------------------------
+    public static double computeScore(String description, List<ClaimRule> rules) {
+
+        DamageClaim temp = new DamageClaim();
+        temp.setDescription(description);
+
+        return evaluate(temp, rules);
     }
 }
