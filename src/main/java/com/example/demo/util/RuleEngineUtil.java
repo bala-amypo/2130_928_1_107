@@ -7,35 +7,46 @@ import java.util.List;
 
 public class RuleEngineUtil {
 
-    public static boolean evaluate(DamageClaim claim, List<ClaimRule> rules) {
+    // USED BY MANY TESTS
+    public static double computeScore(String description, List<?> rules) {
 
-        if (claim == null || claim.getClaimDescription() == null || rules == null) {
-            return false;
+        if (description == null || rules == null || rules.isEmpty()) {
+            return 0.0;
         }
 
-        double totalScore = 0.0;
+        double total = 0.0;
+
+        for (Object obj : rules) {
+            if (obj instanceof ClaimRule rule) {
+                if (description.toLowerCase()
+                        .contains(rule.getExpression().toLowerCase())) {
+                    total += rule.getWeight();
+                }
+            }
+        }
+        return total;
+    }
+
+    // USED BY SERVICE
+    public static double evaluate(DamageClaim claim, List<ClaimRule> rules) {
+
+        if (claim == null || claim.getClaimDescription() == null) {
+            return 0.0;
+        }
+
+        double score = computeScore(
+                claim.getClaimDescription(), rules);
+
+        claim.getAppliedRules().clear();
 
         for (ClaimRule rule : rules) {
-
-            if ("ALWAYS".equalsIgnoreCase(rule.getExpression())) {
-                totalScore += rule.getWeight();
-                claim.getAppliedRules().add(rule);
-            }
-            else if (claim.getClaimDescription().contains(rule.getExpression())) {
-                totalScore += rule.getWeight();
+            if (claim.getClaimDescription()
+                    .toLowerCase()
+                    .contains(rule.getExpression().toLowerCase())) {
                 claim.getAppliedRules().add(rule);
             }
         }
 
-        // IMPORTANT: score must be NULL before evaluation
-        claim.setScore(totalScore);
-
-        if (totalScore > 0) {
-            claim.setStatus("APPROVED");
-            return true;
-        }
-
-        claim.setStatus("REJECTED");
-        return false;
+        return score;
     }
 }
