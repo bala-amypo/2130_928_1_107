@@ -23,15 +23,21 @@ public class DamageClaim {
     @ManyToMany
     private Set<ClaimRule> appliedRules = new HashSet<>();
 
+    // ================= CONSTRUCTOR =================
     public DamageClaim() {
-        // IMPORTANT: default status
-        this.status = "PENDING";
+        this.status = "PENDING";     // default required by tests
+        this.score = null;           // score must start null
     }
 
     // ================= GETTERS & SETTERS =================
 
     public Long getId() {
         return id;
+    }
+
+    // 🔥 THIS WAS MISSING (TESTS REQUIRE IT)
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getClaimDescription() {
@@ -70,7 +76,6 @@ public class DamageClaim {
         return appliedRules;
     }
 
-    // 🔥 THIS IS WHAT WAS MISSING
     public void setAppliedRules(Set<ClaimRule> appliedRules) {
         this.appliedRules = appliedRules;
     }
