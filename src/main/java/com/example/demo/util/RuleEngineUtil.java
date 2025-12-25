@@ -9,16 +9,17 @@ import java.util.Set;
 
 public class RuleEngineUtil {
 
-    // ----------------------------
+    // -------------------------------------------------
     // MAIN EVALUATION METHOD
-    // ----------------------------
+    // -------------------------------------------------
     public static double evaluate(DamageClaim claim, List<ClaimRule> rules) {
 
         if (claim == null || rules == null || rules.isEmpty()) {
             return 0.0;
         }
 
-        String description = claim.getDescription();
+        // ✅ CORRECT FIELD NAME
+        String description = claim.getClaimDescription();
         if (description == null) {
             return 0.0;
         }
@@ -43,9 +44,9 @@ public class RuleEngineUtil {
                 matched = true;
             }
 
-            // ✅ KEYWORD match (case-insensitive contains)
+            // ✅ KEYWORD match (case-insensitive)
             else if (rule.getExpression() != null &&
-                     description.toLowerCase().contains(rule.getExpression().toLowerCase())) {
+                    description.toLowerCase().contains(rule.getExpression().toLowerCase())) {
                 matched = true;
             }
 
@@ -55,7 +56,7 @@ public class RuleEngineUtil {
             }
         }
 
-        // ✅ store applied rules
+        // ✅ STORE applied rules
         claim.getAppliedRules().clear();
         claim.getAppliedRules().addAll(appliedRules);
 
@@ -66,13 +67,13 @@ public class RuleEngineUtil {
         return matchedWeight / totalWeight;
     }
 
-    // ----------------------------
-    // TEST-ONLY METHOD
-    // ----------------------------
+    // -------------------------------------------------
+    // TEST-ONLY METHOD (REQUIRED)
+    // -------------------------------------------------
     public static double computeScore(String description, List<ClaimRule> rules) {
 
         DamageClaim temp = new DamageClaim();
-        temp.setDescription(description);
+        temp.setClaimDescription(description); // ✅ FIXED
 
         return evaluate(temp, rules);
     }
