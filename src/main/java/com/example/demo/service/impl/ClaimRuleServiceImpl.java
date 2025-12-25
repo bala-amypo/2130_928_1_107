@@ -20,7 +20,7 @@ public class ClaimRuleServiceImpl implements ClaimRuleService {
     public ClaimRule addRule(ClaimRule rule) {
 
         if (rule.getWeight() <= 0) {
-            throw new IllegalArgumentException("Invalid weight");
+            throw new IllegalArgumentException("Invalid rule weight");
         }
 
         return repository.save(rule);

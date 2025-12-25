@@ -7,9 +7,9 @@ import java.util.List;
 
 public class RuleEngineUtil {
 
-    // --------------------------------------------------
-    // Used by MANY TESTS
-    // --------------------------------------------------
+    // ------------------------------------------------
+    // Used directly by test cases
+    // ------------------------------------------------
     public static double computeScore(String description, List<ClaimRule> rules) {
 
         if (description == null || rules == null || rules.isEmpty()) {
@@ -31,7 +31,6 @@ public class RuleEngineUtil {
             if ("ALWAYS".equalsIgnoreCase(rule.getExpression())) {
                 matchedWeight += rule.getWeight();
             }
-
             // KEYWORD rule
             else if (description.toLowerCase()
                     .contains(rule.getExpression().toLowerCase())) {
@@ -39,21 +38,25 @@ public class RuleEngineUtil {
             }
         }
 
-        if (totalWeight == 0) return 0.0;
+        if (totalWeight == 0) {
+            return 0.0;
+        }
 
         return matchedWeight / totalWeight;
     }
 
-    // --------------------------------------------------
+    // ------------------------------------------------
     // Used by DamageClaimService
-    // --------------------------------------------------
+    // ------------------------------------------------
     public static double evaluate(DamageClaim claim, List<ClaimRule> rules) {
 
-        if (claim == null) return 0.0;
+        if (claim == null) {
+            return 0.0;
+        }
 
         double score = computeScore(claim.getClaimDescription(), rules);
 
-        if (claim.getAppliedRules() != null) {
+        if (claim.getAppliedRules() != null && rules != null) {
             claim.getAppliedRules().addAll(rules);
         }
 

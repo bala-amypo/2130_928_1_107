@@ -12,7 +12,6 @@ public class DamageClaim {
 
     private String claimDescription;
     private String status;
-
     private Double score;
 
     @ManyToOne
@@ -23,23 +22,60 @@ public class DamageClaim {
 
     public DamageClaim() {}
 
-    // REQUIRED METHODS
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    // ✅ FIX: default values before save
+    @PrePersist
+    public void prePersist() {
+        if (this.status == null) {
+            this.status = "PENDING";
+        }
+        if (this.score == null) {
+            this.score = 0.0;
+        }
+    }
 
-    public String getClaimDescription() { return claimDescription; }
+    // ===== GETTERS & SETTERS =====
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getClaimDescription() {
+        return claimDescription;
+    }
+
     public void setClaimDescription(String claimDescription) {
         this.claimDescription = claimDescription;
     }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public String getStatus() {
+        return status;
+    }
 
-    public Double getScore() { return score; }
-    public void setScore(Double score) { this.score = score; }
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-    public Parcel getParcel() { return parcel; }
-    public void setParcel(Parcel parcel) { this.parcel = parcel; }
+    public Double getScore() {
+        return score;
+    }
 
-    public Set<ClaimRule> getAppliedRules() { return appliedRules; }
+    public void setScore(Double score) {
+        this.score = score;
+    }
+
+    public Parcel getParcel() {
+        return parcel;
+    }
+
+    public void setParcel(Parcel parcel) {
+        this.parcel = parcel;
+    }
+
+    public Set<ClaimRule> getAppliedRules() {
+        return appliedRules;
+    }
 }

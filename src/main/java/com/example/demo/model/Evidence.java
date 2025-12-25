@@ -18,9 +18,12 @@ public class Evidence {
 
     private LocalDateTime uploadedAt;
 
+    // ✅ FIX: generate timestamp only if missing
     @PrePersist
     public void onUpload() {
-        this.uploadedAt = LocalDateTime.now();
+        if (this.uploadedAt == null) {
+            this.uploadedAt = LocalDateTime.now();
+        }
     }
 
     // ===== GETTERS & SETTERS =====
@@ -32,7 +35,7 @@ public class Evidence {
     public String getFileUrl() {
         return fileUrl;
     }
- 
+
     public void setFileUrl(String fileUrl) {
         this.fileUrl = fileUrl;
     }
