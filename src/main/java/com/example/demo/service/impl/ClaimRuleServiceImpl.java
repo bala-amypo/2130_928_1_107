@@ -19,9 +19,8 @@ public class ClaimRuleServiceImpl implements ClaimRuleService {
     @Override
     public ClaimRule addRule(ClaimRule rule) {
 
-        // ❗ TEST EXPECTATION: return null (NOT exception)
         if (rule == null || rule.getWeight() <= 0) {
-            return null;
+            throw new IllegalArgumentException("Invalid rule weight");
         }
 
         return repository.save(rule);
