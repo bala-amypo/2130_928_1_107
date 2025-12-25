@@ -18,15 +18,10 @@ public class Evidence {
 
     private LocalDateTime uploadedAt;
 
-    // ✅ FIX: constructor timestamp (tests create manually)
-    public Evidence() {
-        this.uploadedAt = LocalDateTime.now();
-    }
-
     @PrePersist
-    public void onUpload() {
-        if (this.uploadedAt == null) {
-            this.uploadedAt = LocalDateTime.now();
+    public void prePersist() {
+        if (uploadedAt == null) {
+            uploadedAt = LocalDateTime.now();
         }
     }
 

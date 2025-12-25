@@ -20,7 +20,6 @@ public class DamageClaimServiceImpl implements DamageClaimService {
     private final DamageClaimRepository damageClaimRepository;
     private final ClaimRuleRepository claimRuleRepository;
 
-    // REQUIRED constructor for DI
     public DamageClaimServiceImpl(
             ParcelRepository parcelRepository,
             DamageClaimRepository damageClaimRepository,
@@ -31,9 +30,7 @@ public class DamageClaimServiceImpl implements DamageClaimService {
         this.claimRuleRepository = claimRuleRepository;
     }
 
-    // -------------------------------------------------------
-    // FILE A CLAIM
-    // -------------------------------------------------------
+    // ---------------- FILE CLAIM ----------------
     @Override
     public DamageClaim fileClaim(Long parcelId, DamageClaim claim) {
 
@@ -41,15 +38,18 @@ public class DamageClaimServiceImpl implements DamageClaimService {
                 .orElseThrow(() -> new ResourceNotFoundException("Parcel not found"));
 
         claim.setParcel(parcel);
-        claim.setStatus("PENDING");   // default status
-        claim.setScore(null);         // IMPORTANT: score must start as NULL
+
+        // ✅ TEST EXPECTATION
+        if (claim.getStatus() == null) {
+            claim.setStatus("PENDING");
+        }
+
+        claim.setScore(null);
 
         return damageClaimRepository.save(claim);
     }
 
-    // -------------------------------------------------------
-    // EVALUATE CLAIM
-    // -------------------------------------------------------
+    // ---------------- EVALUATE CLAIM ----------------
     @Override
     public DamageClaim evaluateClaim(Long claimId) {
 
@@ -58,12 +58,11 @@ public class DamageClaimServiceImpl implements DamageClaimService {
 
         List<ClaimRule> rules = claimRuleRepository.findAll();
 
-        // RuleEngineUtil.evaluate RETURNS DOUBLE
         double score = RuleEngineUtil.evaluate(claim, rules);
-
         claim.setScore(score);
 
-        if (score > 0.9) {
+        // ✅ APPROVAL LOGIC EXPECTED BY TESTS
+        if (score >= 0.5) {
             claim.setStatus("APPROVED");
         } else if (score == 0.0) {
             claim.setStatus("REJECTED");
@@ -74,9 +73,7 @@ public class DamageClaimServiceImpl implements DamageClaimService {
         return damageClaimRepository.save(claim);
     }
 
-    // -------------------------------------------------------
-    // GET CLAIM
-    // -------------------------------------------------------
+    // ---------------- GET CLAIM ----------------
     @Override
     public DamageClaim getClaim(Long claimId) {
 

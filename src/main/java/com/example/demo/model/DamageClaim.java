@@ -11,8 +11,10 @@ public class DamageClaim {
     private Long id;
 
     private String claimDescription;
-    private String status;
-    private Double score;
+
+    private String status = "PENDING";
+
+    private Double score = null;
 
     @ManyToOne
     private Parcel parcel;
@@ -20,13 +22,7 @@ public class DamageClaim {
     @ManyToMany
     private Set<ClaimRule> appliedRules = new HashSet<>();
 
-    // ✅ FIX: constructor defaults (tests depend on this)
-    public DamageClaim() {
-        this.status = "PENDING";
-        this.score = null;
-    }
-
-    // ===== GETTERS & SETTERS =====
+    public DamageClaim() {}
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -45,5 +41,10 @@ public class DamageClaim {
     public Parcel getParcel() { return parcel; }
     public void setParcel(Parcel parcel) { this.parcel = parcel; }
 
-    public Set<ClaimRule> getAppliedRules() { return appliedRules; }
+    public Set<ClaimRule> getAppliedRules() {
+        if (appliedRules == null) {
+            appliedRules = new HashSet<>();
+        }
+        return appliedRules;
+    }
 }
