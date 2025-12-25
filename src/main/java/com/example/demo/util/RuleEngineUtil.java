@@ -9,24 +9,17 @@ import java.util.Set;
 
 public class RuleEngineUtil {
 
-    // -------------------------------
-    // USED BY SERVICES
-    // -------------------------------
+    // Used by service
     public static double evaluate(DamageClaim claim, List<ClaimRule> rules) {
         if (claim == null) return 0.0;
         return computeScore(claim.getClaimDescription(), rules, claim);
     }
 
-    // -------------------------------
-    // USED BY TESTS
-    // -------------------------------
+    // Used by tests
     public static double computeScore(String description, List<?> rules) {
         return computeScore(description, (List<ClaimRule>) rules, null);
     }
 
-    // -------------------------------
-    // CORE LOGIC
-    // -------------------------------
     private static double computeScore(
             String description,
             List<ClaimRule> rules,
@@ -37,6 +30,8 @@ public class RuleEngineUtil {
         if (description == null) description = "";
 
         description = description.toLowerCase();
+
+        String[] words = description.split("\\s+");
 
         double totalWeight = 0.0;
         double matchedWeight = 0.0;
@@ -53,9 +48,18 @@ public class RuleEngineUtil {
 
             expr = expr.toLowerCase();
 
-            boolean matched =
-                    expr.equals("always") ||
-                    description.contains(expr);
+            boolean matched = false;
+
+            if ("always".equals(expr)) {
+                matched = true;
+            } else {
+                for (String word : words) {
+                    if (word.contains(expr)) {
+                        matched = true;
+                        break;
+                    }
+                }
+            }
 
             if (matched) {
                 matchedWeight += rule.getWeight();
