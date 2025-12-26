@@ -3,6 +3,7 @@ package com.example.demo.model;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "claim_rules")
 public class ClaimRule {
 
     @Id
@@ -10,49 +11,30 @@ public class ClaimRule {
     private Long id;
 
     private String ruleName;
-    private String keyword;
+    
+    // CHANGED: From 'keyword' to 'conditionExpression' per requirements
+    private String conditionExpression; 
+    
     private double weight;
 
     public ClaimRule() {
     }
 
-    public ClaimRule(String ruleName, String keyword, double weight) {
+    public ClaimRule(String ruleName, String conditionExpression, double weight) {
         this.ruleName = ruleName;
-        this.keyword = keyword;
+        this.conditionExpression = conditionExpression;
         this.weight = weight;
     }
 
-    // ---------- getters & setters ----------
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Long getId() {
-        return id;
-    }
+    public String getRuleName() { return ruleName; }
+    public void setRuleName(String ruleName) { this.ruleName = ruleName; }
 
-    public String getRuleName() {
-        return ruleName;
-    }
+    public String getConditionExpression() { return conditionExpression; }
+    public void setConditionExpression(String conditionExpression) { this.conditionExpression = conditionExpression; }
 
-    public String getKeyword() {
-        return keyword;
-    }
-
-    public double getWeight() {
-        return weight;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setRuleName(String ruleName) {
-        this.ruleName = ruleName;
-    }
-
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
-    }
-
-    public void setWeight(double weight) {
-        this.weight = weight;
-    }
+    public double getWeight() { return weight; }
+    public void setWeight(double weight) { this.weight = weight; }
 }

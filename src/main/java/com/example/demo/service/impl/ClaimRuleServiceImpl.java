@@ -1,6 +1,6 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.exception.BadRequestException; // Ensure this exception exists
+import com.example.demo.exception.BadRequestException;
 import com.example.demo.model.ClaimRule;
 import com.example.demo.repository.ClaimRuleRepository;
 import com.example.demo.service.ClaimRuleService;
@@ -19,9 +19,9 @@ public class ClaimRuleServiceImpl implements ClaimRuleService {
 
     @Override
     public ClaimRule addRule(ClaimRule rule) {
-        // Validation: Weight must be >= 0
+        // Validation: Must throw exception if weight is negative
+        // Message must contain "weight"
         if (rule.getWeight() < 0) {
-            // The test expects an exception (likely BadRequestException based on your docs)
             throw new BadRequestException("Rule weight cannot be negative");
         }
         return claimRuleRepository.save(rule);
