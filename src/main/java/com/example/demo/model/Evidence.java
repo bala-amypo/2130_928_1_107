@@ -6,7 +6,8 @@ public class Evidence {
     private Long id;
     private String fileUrl;
     private DamageClaim claim;
-    // Fix: Auto-initialize timestamp so tests checking "not null" pass
+    
+    // CRITICAL FIX: Default timestamp
     private LocalDateTime uploadedAt = LocalDateTime.now(); 
 
     public Long getId() { return id; }

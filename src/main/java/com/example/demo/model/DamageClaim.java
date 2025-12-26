@@ -8,9 +8,13 @@ public class DamageClaim {
     private Long id;
     private String claimDescription;
     private Double score;
-    private String status = "PENDING"; // Fix: Default status
+    
+    // CRITICAL FIX: Default status
+    private String status = "PENDING"; 
+    
     private Parcel parcel;
     private LocalDateTime uploadedAt;
+    
     private Set<ClaimRule> appliedRules = new HashSet<>();
 
     public Long getId() { return id; }
