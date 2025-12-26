@@ -1,14 +1,12 @@
-package com.example.demo.model;
+package com.example.demo.service;
 
-public class Evidence {
-    private Long id;
-    private String fileUrl;
-    private DamageClaim claim;
+import com.example.demo.model.Evidence;
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getFileUrl() { return fileUrl; }
-    public void setFileUrl(String fileUrl) { this.fileUrl = fileUrl; }
-    public DamageClaim getClaim() { return claim; }
-    public void setClaim(DamageClaim claim) { this.claim = claim; }
+import java.util.List;
+
+public interface EvidenceService {
+
+    Evidence uploadEvidence(Long claimId, Evidence evidence);
+
+    List<Evidence> getEvidenceForClaim(Long claimId);
 }
