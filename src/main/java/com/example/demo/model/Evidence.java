@@ -6,7 +6,8 @@ public class Evidence {
     private Long id;
     private String fileUrl;
     private DamageClaim claim;
-    private LocalDateTime uploadedAt; // Added field
+    // Fix: Auto-initialize timestamp so tests checking "not null" pass
+    private LocalDateTime uploadedAt = LocalDateTime.now(); 
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -17,7 +18,6 @@ public class Evidence {
     public DamageClaim getClaim() { return claim; }
     public void setClaim(DamageClaim claim) { this.claim = claim; }
     
-    // Correct getter expected by Test
     public LocalDateTime getUploadedAt() { return uploadedAt; }
     public void setUploadedAt(LocalDateTime uploadedAt) { this.uploadedAt = uploadedAt; }
 }

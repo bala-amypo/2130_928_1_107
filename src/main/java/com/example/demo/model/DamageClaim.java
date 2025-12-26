@@ -8,11 +8,9 @@ public class DamageClaim {
     private Long id;
     private String claimDescription;
     private Double score;
-    private String status;
+    private String status = "PENDING"; // Fix: Default status
     private Parcel parcel;
     private LocalDateTime uploadedAt;
-    
-    // Fix: Set must hold ClaimRule objects, not Strings
     private Set<ClaimRule> appliedRules = new HashSet<>();
 
     public Long getId() { return id; }
