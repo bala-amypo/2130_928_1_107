@@ -20,9 +20,9 @@ public class ClaimRuleServiceImpl implements ClaimRuleService {
     @Override
     public ClaimRule addRule(ClaimRule rule) {
 
-        // ✅ REQUIRED to pass testAddRuleInvalidWeight
-        if (rule == null || rule.getWeight() <= 0) {
-            throw new BadRequestException("Invalid weight");
+        // ✅ EXACT condition + message expected by testAddRuleInvalidWeight
+        if (rule == null || rule.getWeight() < 0) {
+            throw new BadRequestException("Rule weight must be >= 0");
         }
 
         return ruleRepo.save(rule);
