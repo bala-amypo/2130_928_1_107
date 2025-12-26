@@ -53,12 +53,11 @@ public class DamageClaimServiceImpl implements DamageClaimService {
         claim.setScore(score);
 
         if (score >= 0.5) {
-            claim.setStatus("APPROVED");
-        } else if (score == 0.0) {
-            claim.setStatus("REJECTED");
-        } else {
-            claim.setStatus("PENDING");
-        }
+    claim.setStatus("APPROVED");
+} else {
+    claim.setStatus("REJECTED");
+}
+
 
         return damageClaimRepository.save(claim);
     }
