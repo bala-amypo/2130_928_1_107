@@ -11,23 +11,17 @@ public class ClaimRule {
     private Long id;
 
     private String ruleName;
-    
-    // Correct field name for requirements
     private String conditionExpression; 
-    
-    // Wrapper class Double is required for null safety
     private Double weight;
 
-    public ClaimRule() {
-    }
+    public ClaimRule() {}
 
+    // Constructor used by the Test Case
     public ClaimRule(String ruleName, String conditionExpression, Double weight) {
         this.ruleName = ruleName;
         this.conditionExpression = conditionExpression;
         this.weight = weight;
     }
-
-    // ---------- Getters & Setters ----------
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

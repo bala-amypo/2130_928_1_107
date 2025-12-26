@@ -15,10 +15,9 @@ public class ClaimRuleServiceImpl implements ClaimRuleService {
 
     @Override
     public ClaimRule addRule(ClaimRule rule) {
-        // Validation: Check for null/negative weight
-        // The message includes "Rule weight" to satisfy the test case
+        // Validation: The message MUST contain the word "weight"
         if (rule.getWeight() == null || rule.getWeight() < 0) {
-            throw new BadRequestException("Rule weight cannot be negative or null");
+            throw new BadRequestException("Invalid rule: Rule weight cannot be negative.");
         }
         return ruleRepo.save(rule);
     }
