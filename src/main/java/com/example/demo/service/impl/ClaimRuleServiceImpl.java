@@ -19,8 +19,8 @@ public class ClaimRuleServiceImpl implements ClaimRuleService {
     @Override
     public ClaimRule addRule(ClaimRule rule) {
 
-        // STRICT
-        if (rule == null || rule.getWeight() <= 0) {
+        // 🔥 ZERO is allowed, NEGATIVE is NOT
+        if (rule == null || rule.getWeight() < 0) {
             throw new IllegalArgumentException("Invalid rule weight");
         }
 

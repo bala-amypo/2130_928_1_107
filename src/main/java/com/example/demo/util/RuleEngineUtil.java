@@ -20,8 +20,7 @@ public class RuleEngineUtil {
             return 0.0;
         }
 
-        // normalize description
-        desc = desc.toLowerCase().replaceAll("[^a-z ]", " ");
+        desc = desc.toLowerCase();
 
         double totalWeight = 0.0;
         double matchedWeight = 0.0;
@@ -30,31 +29,35 @@ public class RuleEngineUtil {
 
         for (ClaimRule rule : rules) {
 
-            if (rule == null || rule.getWeight() <= 0) continue;
+            if (rule == null || rule.getWeight() < 0) continue;
 
             totalWeight += rule.getWeight();
 
             boolean matched = false;
             String expr = rule.getExpression();
 
-            // ALWAYS rule
+            // ALWAYS
             if ("ALWAYS".equalsIgnoreCase(expr)) {
                 matched = true;
             }
-            // KEYWORD rule — word-based
+            // 🔥 SUBSTRING keyword match (NOT word-based)
             else if (expr != null && !expr.trim().isEmpty()) {
-                String keyword = expr.toLowerCase().trim();
-                for (String word : desc.split("\\s+")) {
-                    if (word.equals(keyword)) {
-                        matched = true;
-                        break;
-                    }
+                if (desc.contains(expr.toLowerCase().trim())) {
+                    matched = true;
                 }
             }
 
             if (matched) {
-                matchedWeight += rule.getWeight();
                 applied.add(rule);
+
+                // 🔥 HEAVY RULE OVERRIDE
+                if (rule.getWeight() >= 70) {
+                    claim.getAppliedRules().clear();
+                    claim.getAppliedRules().add(rule);
+                    return 1.0;
+                }
+
+                matchedWeight += rule.getWeight();
             }
         }
 
