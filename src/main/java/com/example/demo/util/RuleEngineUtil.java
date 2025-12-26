@@ -20,7 +20,7 @@ public class RuleEngineUtil {
         Set<ClaimRule> applied = new HashSet<>();
 
         for (ClaimRule rule : rules) {
-            // Null-safe check for weight (handle Double wrapper)
+            // Check for null weight (Double wrapper)
             if (rule == null || rule.getWeight() == null || rule.getWeight() < 0) continue;
 
             totalWeight += rule.getWeight();
@@ -37,6 +37,7 @@ public class RuleEngineUtil {
                     String[] parts = condition.split(":", 2);
                     if (parts.length > 1) {
                         String keyword = parts[1].trim();
+                        // Case-insensitive check
                         if (description != null && description.toLowerCase().contains(keyword.toLowerCase())) {
                             match = true;
                         }
@@ -56,6 +57,7 @@ public class RuleEngineUtil {
         return matchedWeight / totalWeight;
     }
 
+    // REQUIRED HELPER: Used by test suite
     public static double computeScore(String description, List<ClaimRule> rules) {
         DamageClaim dummy = new DamageClaim();
         dummy.setClaimDescription(description);

@@ -12,10 +12,10 @@ public class ClaimRule {
 
     private String ruleName;
     
-    // Requirements specify "conditionExpression" for mapping
+    // Matched to requirements (was 'keyword' in older versions)
     private String conditionExpression; 
     
-    // Requirements specify Double (Wrapper), not primitive double
+    // Changed to Double (Wrapper) to safely handle nulls in validation
     private Double weight;
 
     public ClaimRule() {
