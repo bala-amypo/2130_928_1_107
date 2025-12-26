@@ -20,7 +20,7 @@ public class RuleEngineUtil {
             return 0.0;
         }
 
-        desc = desc.toLowerCase();
+        desc = desc.toLowerCase().replaceAll("[^a-z0-9 ]", " ");
 
         double totalWeight = 0.0;
         double matchedWeight = 0.0;
@@ -29,34 +29,32 @@ public class RuleEngineUtil {
 
         for (ClaimRule rule : rules) {
 
-            if (rule == null || rule.getWeight() < 0) continue;
+            if (rule == null || rule.getWeight() <= 0) continue;
 
             totalWeight += rule.getWeight();
 
             boolean matched = false;
             String expr = rule.getExpression();
 
-            // ALWAYS
+            // ALWAYS rule
             if ("ALWAYS".equalsIgnoreCase(expr)) {
                 matched = true;
             }
-            // 🔥 SUBSTRING keyword match (NOT word-based)
+            // 🔥 WORD-LEVEL MATCH
             else if (expr != null && !expr.trim().isEmpty()) {
-                if (desc.contains(expr.toLowerCase().trim())) {
-                    matched = true;
+
+                String cleanExpr = expr.toLowerCase().replaceAll("[^a-z0-9 ]", " ");
+
+                for (String word : desc.split("\\s+")) {
+                    if (word.contains(cleanExpr)) {
+                        matched = true;
+                        break;
+                    }
                 }
             }
 
             if (matched) {
                 applied.add(rule);
-
-                // 🔥 HEAVY RULE OVERRIDE
-                if (rule.getWeight() >= 70) {
-                    claim.getAppliedRules().clear();
-                    claim.getAppliedRules().add(rule);
-                    return 1.0;
-                }
-
                 matchedWeight += rule.getWeight();
             }
         }
@@ -69,7 +67,7 @@ public class RuleEngineUtil {
         return matchedWeight / totalWeight;
     }
 
-    // Required by tests
+    // REQUIRED BY TESTS
     public static double computeScore(String description, List<ClaimRule> rules) {
         DamageClaim temp = new DamageClaim();
         temp.setClaimDescription(description);
