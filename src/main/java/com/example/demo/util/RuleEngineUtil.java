@@ -20,8 +20,8 @@ public class RuleEngineUtil {
         Set<ClaimRule> applied = new HashSet<>();
 
         for (ClaimRule rule : rules) {
-            // Null-safe check
-            if (rule == null || rule.getWeight() == null || rule.getWeight() < 0) continue;
+            // Robust check including NaN
+            if (rule == null || rule.getWeight() == null || rule.getWeight() < 0 || Double.isNaN(rule.getWeight())) continue;
 
             totalWeight += rule.getWeight();
             boolean match = false;
