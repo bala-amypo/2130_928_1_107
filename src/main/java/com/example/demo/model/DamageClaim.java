@@ -31,7 +31,19 @@ public class DamageClaim {
     )
     private Set<ClaimRule> appliedRules = new HashSet<>();
 
-    // ---------- getters & setters ----------
+    // ---------------- REQUIRED BY TESTS ----------------
+
+    // 🔑 Alias setter expected by tests
+    public void setClaimDescription(String description) {
+        this.description = description;
+    }
+
+    // 🔑 Alias getter expected by tests
+    public String getClaimDescription() {
+        return this.description;
+    }
+
+    // ---------------- NORMAL GETTERS / SETTERS ----------------
 
     public Long getId() {
         return id;
