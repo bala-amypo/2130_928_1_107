@@ -9,35 +9,41 @@ public class ClaimRule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    // Tests expect ruleName
+    private String ruleName;
 
-    private String keyword;   // ✅ REQUIRED FOR RULE ENGINE
-
+    private String keyword;
     private double weight;
 
-    // ---------- GETTERS & SETTERS ----------
+    // ✅ REQUIRED NO-ARG CONSTRUCTOR
+    public ClaimRule() {}
+
+    // ✅ REQUIRED 3-ARG CONSTRUCTOR
+    public ClaimRule(String ruleName, String keyword, double weight) {
+        this.ruleName = ruleName;
+        this.keyword = keyword;
+        this.weight = weight;
+    }
+
+    // ---------- REQUIRED BY TESTS ----------
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public String getRuleName() {
+        return ruleName;
     }
 
-    public String getName() {
-        return name;
+    public void setRuleName(String ruleName) {
+        this.ruleName = ruleName;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getKeyword() {     // ✅ REQUIRED
+    public String getKeyword() {
         return keyword;
     }
 
-    public void setKeyword(String keyword) { // ✅ REQUIRED
+    public void setKeyword(String keyword) {
         this.keyword = keyword;
     }
 

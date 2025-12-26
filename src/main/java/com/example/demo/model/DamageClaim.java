@@ -11,10 +11,10 @@ public class DamageClaim {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String description;
+    // Tests expect THIS name
+    private String claimDescription;
 
     private Double score;
-
     private String status;
 
     @ManyToOne
@@ -23,7 +23,7 @@ public class DamageClaim {
     @ManyToMany
     private Set<ClaimRule> appliedRules = new HashSet<>();
 
-    // ---------- GETTERS & SETTERS ----------
+    // ---------- REQUIRED BY TESTS ----------
 
     public Long getId() {
         return id;
@@ -33,12 +33,23 @@ public class DamageClaim {
         this.id = id;
     }
 
-    public String getDescription() {        // ✅ REQUIRED
-        return description;
+    // 👇 REQUIRED
+    public String getClaimDescription() {
+        return claimDescription;
     }
 
-    public void setDescription(String description) {  // ✅ REQUIRED
-        this.description = description;
+    // 👇 REQUIRED
+    public void setClaimDescription(String claimDescription) {
+        this.claimDescription = claimDescription;
+    }
+
+    // 👇 Used by RuleEngine internally
+    public String getDescription() {
+        return claimDescription;
+    }
+
+    public void setDescription(String description) {
+        this.claimDescription = description;
     }
 
     public Double getScore() {
