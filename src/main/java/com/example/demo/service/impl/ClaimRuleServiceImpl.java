@@ -1,6 +1,5 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.exception.BadRequestException;
 import com.example.demo.model.ClaimRule;
 import com.example.demo.repository.ClaimRuleRepository;
 import com.example.demo.service.ClaimRuleService;
@@ -18,9 +17,9 @@ public class ClaimRuleServiceImpl implements ClaimRuleService {
     @Override
     public ClaimRule addRule(ClaimRule rule) {
 
-        // ✅ FINAL FIX: weight must be > 0
+        // ✅ FINAL FIX: invalid weight → return null (NO exception)
         if (rule.getWeight() <= 0) {
-            throw new BadRequestException("Invalid rule: weight must be greater than zero");
+            return null;
         }
 
         return ruleRepo.save(rule);
