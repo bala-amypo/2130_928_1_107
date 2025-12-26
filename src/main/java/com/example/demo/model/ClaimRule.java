@@ -12,9 +12,11 @@ public class ClaimRule {
 
     private String ruleName;
     
+    // Correct field name for requirements
     private String conditionExpression; 
     
-    private Double weight; // Wrapper class
+    // Wrapper class Double is required for null safety
+    private Double weight;
 
     public ClaimRule() {
     }
@@ -24,6 +26,8 @@ public class ClaimRule {
         this.conditionExpression = conditionExpression;
         this.weight = weight;
     }
+
+    // ---------- Getters & Setters ----------
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
