@@ -13,7 +13,6 @@ public class RuleEngineUtil {
     // SERVICE-LEVEL EVALUATION
     // ============================
     public static double evaluate(DamageClaim claim, List<ClaimRule> rules) {
-
         if (claim == null || rules == null || rules.isEmpty()) {
             return 0.0;
         }
@@ -25,66 +24,48 @@ public class RuleEngineUtil {
         Set<ClaimRule> applied = new HashSet<>();
 
         for (ClaimRule rule : rules) {
-
-            if (rule == null || rule.getWeight() <= 0) continue;
+            // Basic validation
+            if (rule == null || rule.getWeight() < 0) continue; // Ignore negative weights safely
 
             totalWeight += rule.getWeight();
+            boolean match = false;
 
-            // ALWAYS RULE → ALWAYS MATCH
-            if ("ALWAYS".equalsIgnoreCase(rule.getRuleName())) {
-                matchedWeight += rule.getWeight();
-                applied.add(rule);
+            String ruleName = rule.getRuleName() != null ? rule.getRuleName().toUpperCase() : "";
+
+            // 1. ALWAYS Rule
+            if ("ALWAYS".equals(ruleName)) {
+                match = true;
+            }
+            // 2. KEYWORD Rule
+            else if ("KEYWORD".equals(ruleName)) {
+                String keyword = rule.getKeyword();
+                // Null-safe check: match if description contains keyword (case-insensitive)
+                if (description != null && keyword != null && 
+                    description.toLowerCase().contains(keyword.toLowerCase())) {
+                    match = true;
+                }
             }
 
-            // KEYWORD RULE
-            else if ("KEYWORD".equalsIgnoreCase(rule.getRuleName())
-                    && description != null
-                    && rule.getKeyword() != null
-                    && description.toLowerCase().contains(rule.getKeyword().toLowerCase())) {
-
+            if (match) {
                 matchedWeight += rule.getWeight();
                 applied.add(rule);
             }
         }
 
+        // Update the claim with applied rules
         claim.setAppliedRules(applied);
 
         if (totalWeight == 0) return 0.0;
-
         return matchedWeight / totalWeight;
     }
 
     // ============================
-    // TEST-LEVEL SCORING METHOD
+    // TEST-LEVEL SCORING METHOD (Used by specific tests)
     // ============================
     public static double computeScore(String description, List<ClaimRule> rules) {
-
-        if (rules == null || rules.isEmpty()) return 0.0;
-
-        double totalWeight = 0.0;
-        double matchedWeight = 0.0;
-
-        for (ClaimRule rule : rules) {
-
-            if (rule == null || rule.getWeight() <= 0) continue;
-
-            totalWeight += rule.getWeight();
-
-            if ("ALWAYS".equalsIgnoreCase(rule.getRuleName())) {
-                matchedWeight += rule.getWeight();
-            }
-
-            else if ("KEYWORD".equalsIgnoreCase(rule.getRuleName())
-                    && description != null
-                    && rule.getKeyword() != null
-                    && description.toLowerCase().contains(rule.getKeyword().toLowerCase())) {
-
-                matchedWeight += rule.getWeight();
-            }
-        }
-
-        if (totalWeight == 0) return 0.0;
-
-        return matchedWeight / totalWeight;
+        // Create a dummy claim to reuse the logic above
+        DamageClaim dummy = new DamageClaim();
+        dummy.setClaimDescription(description);
+        return evaluate(dummy, rules);
     }
 }
