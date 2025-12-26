@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
+import com.example.demo.exception.BadRequestException;
 import com.example.demo.model.ClaimRule;
 import com.example.demo.service.ClaimRuleService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,8 +19,16 @@ public class ClaimRuleController {
     }
 
     @PostMapping
-    public ClaimRule addRule(@RequestBody ClaimRule rule) {
-        return ruleService.addRule(rule);
+    public ResponseEntity<?> addRule(@RequestBody ClaimRule rule) {
+        try {
+            // Try to add the rule
+            ClaimRule savedRule = ruleService.addRule(rule);
+            return ResponseEntity.ok(savedRule);
+        } catch (BadRequestException e) {
+            // CRITICAL FIX: Catch the exception from the service 
+            // and return the message (containing "weight") with 400 Bad Request.
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping
