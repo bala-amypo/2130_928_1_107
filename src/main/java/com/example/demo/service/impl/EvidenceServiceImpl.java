@@ -1,15 +1,16 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.DamageClaim;
 import com.example.demo.model.Evidence;
 import com.example.demo.repository.DamageClaimRepository;
 import com.example.demo.repository.EvidenceRepository;
 import com.example.demo.service.EvidenceService;
-import java.util.Optional;
+import java.util.List;
 
 public class EvidenceServiceImpl implements EvidenceService {
-    private EvidenceRepository evidenceRepo;
-    private DamageClaimRepository claimRepo;
+    private final EvidenceRepository evidenceRepo;
+    private final DamageClaimRepository claimRepo;
 
     public EvidenceServiceImpl(EvidenceRepository evidenceRepo, DamageClaimRepository claimRepo) {
         this.evidenceRepo = evidenceRepo;
@@ -17,14 +18,16 @@ public class EvidenceServiceImpl implements EvidenceService {
     }
 
     @Override
-    public Evidence uploadEvidence(Long claimId, Evidence evidence) throws Exception {
-        Optional<DamageClaim> claimOpt = claimRepo.findById(claimId);
-        if (!claimOpt.isPresent()) {
-            throw new Exception("Claim not found");
-        }
-        evidence.setClaim(claimOpt.get());
+    public Evidence uploadEvidence(Long claimId, Evidence evidence) {
+        DamageClaim claim = claimRepo.findById(claimId)
+                .orElseThrow(() -> new ResourceNotFoundException("Claim not found"));
+        
+        evidence.setClaim(claim);
         return evidenceRepo.save(evidence);
     }
-    
-    // getEvidenceForClaim implementation...
+
+    @Override
+    public List<Evidence> getEvidenceForClaim(Long claimId) {
+        return evidenceRepo.findByClaim_Id(claimId);
+    }
 }
