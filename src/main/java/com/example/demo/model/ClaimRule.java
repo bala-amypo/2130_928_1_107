@@ -12,10 +12,10 @@ public class ClaimRule {
 
     private String ruleName;
     
-    // Matched to requirements (was 'keyword' in older versions)
+    // Correct field matching the passed tests
     private String conditionExpression; 
     
-    // Changed to Double (Wrapper) to safely handle nulls in validation
+    // Using Wrapper class to handle nulls safely
     private Double weight;
 
     public ClaimRule() {
