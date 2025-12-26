@@ -6,9 +6,11 @@ import com.example.demo.model.Evidence;
 import com.example.demo.repository.DamageClaimRepository;
 import com.example.demo.repository.EvidenceRepository;
 import com.example.demo.service.EvidenceService;
+import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Service
 public class EvidenceServiceImpl implements EvidenceService {
     private final EvidenceRepository evidenceRepo;
     private final DamageClaimRepository claimRepo;
@@ -24,7 +26,6 @@ public class EvidenceServiceImpl implements EvidenceService {
                 .orElseThrow(() -> new ResourceNotFoundException("Claim not found"));
         
         evidence.setClaim(claim);
-        // Fix: Set timestamp
         evidence.setUploadedAt(LocalDateTime.now());
         
         return evidenceRepo.save(evidence);
