@@ -31,6 +31,7 @@ public class DamageClaimServiceImpl implements DamageClaimService {
 
     @Override
     public DamageClaim fileClaim(Long parcelId, DamageClaim claim) {
+
         Parcel parcel = parcelRepository.findById(parcelId)
                 .orElseThrow(() -> new ResourceNotFoundException("Parcel not found"));
 
@@ -43,6 +44,7 @@ public class DamageClaimServiceImpl implements DamageClaimService {
 
     @Override
     public DamageClaim evaluateClaim(Long claimId) {
+
         DamageClaim claim = damageClaimRepository.findById(claimId)
                 .orElseThrow(() -> new ResourceNotFoundException("Claim not found"));
 
@@ -50,10 +52,12 @@ public class DamageClaimServiceImpl implements DamageClaimService {
         double score = RuleEngineUtil.evaluate(claim, rules);
         claim.setScore(score);
 
-        if (score >= 0.6) {
+        if (score >= 0.5) {
             claim.setStatus("APPROVED");
-        } else {
+        } else if (score == 0.0) {
             claim.setStatus("REJECTED");
+        } else {
+            claim.setStatus("PENDING");
         }
 
         return damageClaimRepository.save(claim);
