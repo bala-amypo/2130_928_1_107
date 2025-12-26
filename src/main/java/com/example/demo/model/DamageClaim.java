@@ -8,23 +8,31 @@ public class DamageClaim {
     private Long id;
     private String claimDescription;
     private Double score;
-    private String status; // "PENDING", "APPROVED", "REJECTED"
+    private String status;
     private Parcel parcel;
     private LocalDateTime uploadedAt;
-    private Set<String> appliedRules = new HashSet<>();
+    
+    // Fix: Set must hold ClaimRule objects, not Strings
+    private Set<ClaimRule> appliedRules = new HashSet<>();
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
     public String getClaimDescription() { return claimDescription; }
     public void setClaimDescription(String claimDescription) { this.claimDescription = claimDescription; }
+
     public Double getScore() { return score; }
     public void setScore(Double score) { this.score = score; }
+
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
     public Parcel getParcel() { return parcel; }
     public void setParcel(Parcel parcel) { this.parcel = parcel; }
+
     public LocalDateTime getUploadedAt() { return uploadedAt; }
     public void setUploadedAt(LocalDateTime uploadedAt) { this.uploadedAt = uploadedAt; }
-    public Set<String> getAppliedRules() { return appliedRules; }
-    public void setAppliedRules(Set<String> appliedRules) { this.appliedRules = appliedRules; }
+    
+    public Set<ClaimRule> getAppliedRules() { return appliedRules; }
+    public void setAppliedRules(Set<ClaimRule> appliedRules) { this.appliedRules = appliedRules; }
 }

@@ -6,6 +6,7 @@ import com.example.demo.model.Evidence;
 import com.example.demo.repository.DamageClaimRepository;
 import com.example.demo.repository.EvidenceRepository;
 import com.example.demo.service.EvidenceService;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class EvidenceServiceImpl implements EvidenceService {
@@ -23,6 +24,9 @@ public class EvidenceServiceImpl implements EvidenceService {
                 .orElseThrow(() -> new ResourceNotFoundException("Claim not found"));
         
         evidence.setClaim(claim);
+        // Fix: Set timestamp
+        evidence.setUploadedAt(LocalDateTime.now());
+        
         return evidenceRepo.save(evidence);
     }
 
