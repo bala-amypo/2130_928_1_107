@@ -12,11 +12,9 @@ public class ClaimRule {
 
     private String ruleName;
     
-    // Test suite expects 'conditionExpression'
     private String conditionExpression; 
     
-    // Wrapper class 'Double' required for null checks
-    private Double weight;
+    private Double weight; // Wrapper class
 
     public ClaimRule() {
     }
@@ -26,8 +24,6 @@ public class ClaimRule {
         this.conditionExpression = conditionExpression;
         this.weight = weight;
     }
-
-    // ---------- Getters & Setters ----------
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

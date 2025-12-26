@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.exception.BadRequestException;
 import com.example.demo.model.ClaimRule;
 import com.example.demo.service.ClaimRuleService;
 import org.springframework.http.ResponseEntity;
@@ -19,19 +18,14 @@ public class ClaimRuleController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addRule(@RequestBody ClaimRule rule) {
-        try {
-            ClaimRule savedRule = ruleService.addRule(rule);
-            return ResponseEntity.ok(savedRule);
-        } catch (BadRequestException e) {
-            // CRITICAL: Return the exception message string in the body
-            // This ensures assertions like content().string(containsString("weight")) pass.
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<ClaimRule> addRule(@RequestBody ClaimRule rule) {
+        // Just call the service. If it fails, GlobalExceptionHandler catches it.
+        ClaimRule savedRule = ruleService.addRule(rule);
+        return ResponseEntity.ok(savedRule);
     }
 
     @GetMapping
-    public List<ClaimRule> getAll() {
-        return ruleService.getAllRules();
+    public ResponseEntity<List<ClaimRule>> getAll() {
+        return ResponseEntity.ok(ruleService.getAllRules());
     }
 }
