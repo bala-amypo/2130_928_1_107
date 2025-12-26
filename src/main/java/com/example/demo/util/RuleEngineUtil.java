@@ -20,7 +20,8 @@ public class RuleEngineUtil {
         Set<ClaimRule> applied = new HashSet<>();
 
         for (ClaimRule rule : rules) {
-            if (rule == null || rule.getWeight() < 0) continue;
+            // Null-safe check for weight (handle Double wrapper)
+            if (rule == null || rule.getWeight() == null || rule.getWeight() < 0) continue;
 
             totalWeight += rule.getWeight();
             boolean match = false;
@@ -55,7 +56,6 @@ public class RuleEngineUtil {
         return matchedWeight / totalWeight;
     }
 
-    // Helper for tests that call computeScore directly
     public static double computeScore(String description, List<ClaimRule> rules) {
         DamageClaim dummy = new DamageClaim();
         dummy.setClaimDescription(description);

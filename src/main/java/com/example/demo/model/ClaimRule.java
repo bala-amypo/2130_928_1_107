@@ -12,19 +12,22 @@ public class ClaimRule {
 
     private String ruleName;
     
-    // CHANGED: From 'keyword' to 'conditionExpression' per requirements
+    // Requirements specify "conditionExpression" for mapping
     private String conditionExpression; 
     
-    private double weight;
+    // Requirements specify Double (Wrapper), not primitive double
+    private Double weight;
 
     public ClaimRule() {
     }
 
-    public ClaimRule(String ruleName, String conditionExpression, double weight) {
+    public ClaimRule(String ruleName, String conditionExpression, Double weight) {
         this.ruleName = ruleName;
         this.conditionExpression = conditionExpression;
         this.weight = weight;
     }
+
+    // ---------- Getters & Setters ----------
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -35,6 +38,6 @@ public class ClaimRule {
     public String getConditionExpression() { return conditionExpression; }
     public void setConditionExpression(String conditionExpression) { this.conditionExpression = conditionExpression; }
 
-    public double getWeight() { return weight; }
-    public void setWeight(double weight) { this.weight = weight; }
+    public Double getWeight() { return weight; }
+    public void setWeight(Double weight) { this.weight = weight; }
 }
