@@ -1,45 +1,26 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.exception.BadRequestException;
-import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
-@Service
 public class UserServiceImpl implements UserService {
+    private UserRepository userRepo;
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-    // REQUIRED constructor
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserServiceImpl(UserRepository userRepo) {
+        this.userRepo = userRepo;
     }
 
     @Override
-    public User register(User user) {
-
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new BadRequestException("User already exists");
+    public User register(User user) throws Exception { // Bytecode expects exception on duplicate
+        if (user.getEmail() == null || user.getEmail().isEmpty()) {
+            throw new Exception("Email cannot be empty");
         }
-
-        if (user.getRole() == null) {
-            user.setRole("AGENT");
+        if (userRepo.existsByEmail(user.getEmail())) {
+            throw new Exception("email already exists"); 
         }
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        return userRepository.save(user);
+        return userRepo.save(user);
     }
-
-    @Override
-    public User findByEmail(String email) {
-
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-    }
+    
+    // Other methods...
 }
