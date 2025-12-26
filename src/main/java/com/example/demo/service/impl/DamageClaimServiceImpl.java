@@ -1,73 +1,78 @@
-package com.example.demo.service.impl;
+package com.example.demo.util;
 
-import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.ClaimRule;
 import com.example.demo.model.DamageClaim;
-import com.example.demo.model.Parcel;
-import com.example.demo.repository.ClaimRuleRepository;
-import com.example.demo.repository.DamageClaimRepository;
-import com.example.demo.repository.ParcelRepository;
-import com.example.demo.service.DamageClaimService;
-import com.example.demo.util.RuleEngineUtil;
-import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-@Service
-public class DamageClaimServiceImpl implements DamageClaimService {
+public class RuleEngineUtil {
 
-    private final ParcelRepository parcelRepository;
-    private final DamageClaimRepository damageClaimRepository;
-    private final ClaimRuleRepository claimRuleRepository;
+    private RuleEngineUtil() {}
 
-    public DamageClaimServiceImpl(
-            ParcelRepository parcelRepository,
-            DamageClaimRepository damageClaimRepository,
-            ClaimRuleRepository claimRuleRepository) {
+    public static double evaluate(DamageClaim claim, List<ClaimRule> rules) {
 
-        this.parcelRepository = parcelRepository;
-        this.damageClaimRepository = damageClaimRepository;
-        this.claimRuleRepository = claimRuleRepository;
-    }
+        if (claim == null || rules == null || rules.isEmpty()) {
+            return 0.0;
+        }
 
-    @Override
-    public DamageClaim fileClaim(Long parcelId, DamageClaim claim) {
+        String description = claim.getDescription();
+        if (description == null || description.trim().isEmpty()) {
+            claim.setAppliedRules(new HashSet<>());
+            return 0.0;
+        }
 
-        Parcel parcel = parcelRepository.findById(parcelId)
-                .orElseThrow(() -> new ResourceNotFoundException("Parcel not found"));
+        // normalize description
+        String desc = description.toLowerCase().replaceAll("[^a-z0-9 ]", " ");
 
-        claim.setParcel(parcel);
-        claim.setStatus("PENDING");
-        claim.setScore(null);
+        double totalWeight = 0.0;
+        double matchedWeight = 0.0;
 
-        return damageClaimRepository.save(claim);
-    }
+        Set<ClaimRule> appliedRules = new HashSet<>();
 
-    @Override
-    public DamageClaim evaluateClaim(Long claimId) {
+        for (ClaimRule rule : rules) {
 
-        DamageClaim claim = damageClaimRepository.findById(claimId)
-                .orElseThrow(() -> new ResourceNotFoundException("Claim not found"));
+            if (rule == null || rule.getWeight() <= 0) {
+                continue;
+            }
 
-        List<ClaimRule> rules = claimRuleRepository.findAll();
-        double score = RuleEngineUtil.evaluate(claim, rules);
-        claim.setScore(score);
+            totalWeight += rule.getWeight();
 
-        // ✅ FINAL TEST RULE
-        // APPROVAL THRESHOLD FIX
-if (score >= 0.6) {
-    claim.setStatus("APPROVED");
-} else {
-    claim.setStatus("REJECTED");
-}
+            // ALWAYS rule
+            if ("ALWAYS".equalsIgnoreCase(rule.getExpression())) {
+                matchedWeight += rule.getWeight();
+                appliedRules.add(rule);
+                continue;
+            }
 
+            String expr = rule.getExpression();
+            if (expr == null || expr.trim().isEmpty()) {
+                continue;
+            }
 
-        return damageClaimRepository.save(claim);
-    }
+            String cleanExpr = expr.toLowerCase().replaceAll("[^a-z0-9 ]", " ");
 
-    @Override
-    public DamageClaim getClaim(Long claimId) {
-        return damageClaimRepository.findById(claimId)
-                .orElseThrow(() -> new ResourceNotFoundException("Claim not found"));
+            boolean matched = false;
+            for (String word : desc.split("\\s+")) {
+                if (word.contains(cleanExpr)) {
+                    matched = true;
+                    break;
+                }
+            }
+
+            if (matched) {
+                matchedWeight += rule.getWeight();
+                appliedRules.add(rule);
+            }
+        }
+
+        claim.setAppliedRules(appliedRules);
+
+        if (totalWeight == 0) {
+            return 0.0;
+        }
+
+        return matchedWeight / totalWeight;
     }
 }
