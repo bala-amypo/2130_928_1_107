@@ -11,40 +11,38 @@ public class RuleEngineUtil {
 
     public static double evaluate(DamageClaim claim, List<ClaimRule> rules) {
 
-        if (rules == null || rules.isEmpty()) {
-            claim.setAppliedRules(new HashSet<>());
+        if (claim == null || rules == null || rules.isEmpty()) {
             return 0.0;
         }
 
-        if (claim.getDescription() == null) {
-            claim.setAppliedRules(new HashSet<>());
+        String description = claim.getDescription();
+        if (description == null) {
             return 0.0;
         }
+
+        description = description.toLowerCase();
 
         double totalWeight = 0.0;
         double matchedWeight = 0.0;
-        Set<ClaimRule> appliedRules = new HashSet<>();
 
-        String desc = claim.getDescription().toLowerCase();
+        Set<ClaimRule> applied = new HashSet<>();
 
         for (ClaimRule rule : rules) {
             if (rule.getWeight() < 0) {
-                continue;
+                continue; // invalid rule ignored
             }
 
             totalWeight += rule.getWeight();
 
-            try {
-                if (desc.contains(rule.getKeyword().toLowerCase())) {
-                    matchedWeight += rule.getWeight();
-                    appliedRules.add(rule);
-                }
-            } catch (Exception e) {
-                // invalid rule ignored
+            if (rule.getKeyword() != null &&
+                description.contains(rule.getKeyword().toLowerCase())) {
+
+                matchedWeight += rule.getWeight();
+                applied.add(rule);
             }
         }
 
-        claim.setAppliedRules(appliedRules);
+        claim.setAppliedRules(applied);
 
         if (totalWeight == 0) {
             return 0.0;

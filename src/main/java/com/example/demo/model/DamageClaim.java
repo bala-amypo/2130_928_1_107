@@ -11,11 +11,11 @@ public class DamageClaim {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String claimDescription;
-
-    private String status;
+    private String description;
 
     private Double score;
+
+    private String status;
 
     @ManyToOne
     private Parcel parcel;
@@ -23,37 +23,22 @@ public class DamageClaim {
     @ManyToMany
     private Set<ClaimRule> appliedRules = new HashSet<>();
 
-    // ================= CONSTRUCTOR =================
-    public DamageClaim() {
-        this.status = "PENDING";     // default required by tests
-        this.score = null;           // score must start null
-    }
-
-    // ================= GETTERS & SETTERS =================
+    // ---------- GETTERS & SETTERS ----------
 
     public Long getId() {
         return id;
     }
 
-    // 🔥 THIS WAS MISSING (TESTS REQUIRE IT)
     public void setId(Long id) {
         this.id = id;
     }
 
-    public String getClaimDescription() {
-        return claimDescription;
+    public String getDescription() {        // ✅ REQUIRED
+        return description;
     }
 
-    public void setClaimDescription(String claimDescription) {
-        this.claimDescription = claimDescription;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+    public void setDescription(String description) {  // ✅ REQUIRED
+        this.description = description;
     }
 
     public Double getScore() {
@@ -62,6 +47,14 @@ public class DamageClaim {
 
     public void setScore(Double score) {
         this.score = score;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Parcel getParcel() {
