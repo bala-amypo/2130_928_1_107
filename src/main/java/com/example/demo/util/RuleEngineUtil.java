@@ -9,76 +9,76 @@ import java.util.Set;
 
 public class RuleEngineUtil {
 
-    // used by service
+    // ---------------- MAIN EVALUATION ----------------
     public static double evaluate(DamageClaim claim, List<ClaimRule> rules) {
 
         if (claim == null || rules == null || rules.isEmpty()) {
-            claim.setAppliedRules(new HashSet<>());
             return 0.0;
         }
 
-        String description = claim.getDescription();
+        String description = claim.getClaimDescription();
         if (description == null) {
-            claim.setAppliedRules(new HashSet<>());
             return 0.0;
         }
 
         double totalWeight = 0.0;
         double matchedWeight = 0.0;
+
         Set<ClaimRule> applied = new HashSet<>();
 
         for (ClaimRule rule : rules) {
-            if (rule.getWeight() < 0) {
-                continue;
-            }
+
+            if (rule == null || rule.getWeight() <= 0) continue;
 
             totalWeight += rule.getWeight();
 
-            if (rule.getKeyword() != null &&
-                description.toLowerCase().contains(rule.getKeyword().toLowerCase())) {
+            String ruleName = rule.getRuleName();
 
+            // ALWAYS rule
+            if ("ALWAYS".equalsIgnoreCase(ruleName)) {
                 matchedWeight += rule.getWeight();
                 applied.add(rule);
+            }
+
+            // KEYWORD rule
+            else if ("KEYWORD".equalsIgnoreCase(ruleName)) {
+                if (rule.getKeyword() != null &&
+                        description.toLowerCase().contains(rule.getKeyword().toLowerCase())) {
+                    matchedWeight += rule.getWeight();
+                    applied.add(rule);
+                }
             }
         }
 
         claim.setAppliedRules(applied);
 
-        if (totalWeight == 0) {
-            return 0.0;
-        }
+        if (totalWeight == 0) return 0.0;
 
         return matchedWeight / totalWeight;
     }
 
-    // used directly by tests
-    public static double computeScore(String description, List<ClaimRule> rules) {
+    // ---------------- USED BY TESTS ----------------
+    public static boolean computeScore(String description, List<ClaimRule> rules) {
 
         if (description == null || rules == null || rules.isEmpty()) {
-            return 0.0;
+            return false;
         }
-
-        double totalWeight = 0.0;
-        double matchedWeight = 0.0;
 
         for (ClaimRule rule : rules) {
-            if (rule.getWeight() < 0) {
-                continue;
+
+            String ruleName = rule.getRuleName();
+
+            if ("ALWAYS".equalsIgnoreCase(ruleName)) {
+                return true;
             }
 
-            totalWeight += rule.getWeight();
-
-            if (rule.getKeyword() != null &&
-                description.toLowerCase().contains(rule.getKeyword().toLowerCase())) {
-
-                matchedWeight += rule.getWeight();
+            if ("KEYWORD".equalsIgnoreCase(ruleName)
+                    && rule.getKeyword() != null
+                    && description.toLowerCase().contains(rule.getKeyword().toLowerCase())) {
+                return true;
             }
         }
 
-        if (totalWeight == 0) {
-            return 0.0;
-        }
-
-        return matchedWeight / totalWeight;
+        return false;
     }
 }
