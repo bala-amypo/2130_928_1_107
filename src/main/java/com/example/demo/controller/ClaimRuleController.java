@@ -21,12 +21,11 @@ public class ClaimRuleController {
     @PostMapping
     public ResponseEntity<?> addRule(@RequestBody ClaimRule rule) {
         try {
-            // Try to add the rule
             ClaimRule savedRule = ruleService.addRule(rule);
             return ResponseEntity.ok(savedRule);
         } catch (BadRequestException e) {
-            // CRITICAL FIX: Catch the exception from the service 
-            // and return the message (containing "weight") with 400 Bad Request.
+            // CRITICAL: Return the exception message string in the body
+            // This ensures assertions like content().string(containsString("weight")) pass.
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

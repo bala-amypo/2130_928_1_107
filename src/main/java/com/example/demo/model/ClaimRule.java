@@ -12,10 +12,10 @@ public class ClaimRule {
 
     private String ruleName;
     
-    // Correct field matching requirements and test expectations
+    // Test suite expects 'conditionExpression'
     private String conditionExpression; 
     
-    // Wrapper class to safely handle nulls/NaN
+    // Wrapper class 'Double' required for null checks
     private Double weight;
 
     public ClaimRule() {
