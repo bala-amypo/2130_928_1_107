@@ -16,35 +16,43 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
+    // ✅ JWT Utility
     @Bean
     public JwtUtil jwtUtil() {
-        return new JwtUtil("secretkeysecretkeysecretkey123456", 60 * 60 * 1000);
+        return new JwtUtil(
+                "secretkeysecretkeysecretkey123456", // 256-bit key
+                60 * 60 * 1000                         // 1 hour
+        );
     }
 
+    // ✅ JWT Filter
     @Bean
     public JwtFilter jwtFilter(JwtUtil jwtUtil) {
         return new JwtFilter(jwtUtil);
     }
 
+    // ✅ Password Encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // ✅ ONLY AuthenticationManager (single source of truth)
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
+    // ✅ Security Filter Chain
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtFilter jwtFilter)
             throws Exception {
 
         http.csrf(csrf -> csrf.disable());
 
-        http.sessionManagement(
-                session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        http.sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
 
         http.authorizeHttpRequests(auth -> auth
@@ -52,6 +60,7 @@ public class SecurityConfig {
                         "/auth/register",
                         "/auth/login",
                         "/swagger-ui/**",
+                        "/swagger-ui.html",
                         "/v3/api-docs/**"
                 ).permitAll()
                 .anyRequest().authenticated()
