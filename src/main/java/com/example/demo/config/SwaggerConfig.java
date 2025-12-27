@@ -1,47 +1,37 @@
 package com.example.demo.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 @Configuration
-public class SwaggerConfig {
+public class SwaggerConfig { // Class name changed from OpenApiConfig
 
     @Bean
-    public OpenAPI openAPI() {
+    public OpenAPI customOpenAPI() {
 
-        // Local server
-        Server localServer = new Server()
-                .url("http://localhost:8080")
-                .description("Local Development Server");
-
-        // Amypo public server
-        Server amypoServer = new Server()
-                .url("https://9144.408procr.amypo.ai")
-                .description("Amypo Public Server");
-
-        // JWT security scheme
         SecurityScheme bearerAuth = new SecurityScheme()
                 .type(SecurityScheme.Type.HTTP)
                 .scheme("bearer")
-                .bearerFormat("JWT")
-                .name("Authorization");
+                .bearerFormat("JWT");
+
+        Server server = new Server()
+                .url("https://9144.408procr.amypo.ai") // URL updated
+                .description("Production Server");
 
         return new OpenAPI()
-                .info(new Info()
-                        .title("Parcel Damage Claim API")
-                        .version("1.0")
-                        .description("Parcel Damage Claim Management System API"))
-                .addServersItem(localServer)
-                .addServersItem(amypoServer)
-                .addSecurityItem(new SecurityRequirement().addList("BearerAuth"))
+                .addSecurityItem(
+                        new SecurityRequirement().addList("bearerAuth")
+                )
                 .components(
-                        new io.swagger.v3.oas.models.Components()
-                                .addSecuritySchemes("BearerAuth", bearerAuth)
-                );
+                        new Components().addSecuritySchemes("bearerAuth", bearerAuth)
+                )
+                .servers(List.of(server));
     }
 }
