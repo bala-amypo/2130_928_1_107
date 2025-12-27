@@ -21,7 +21,7 @@ public class SecurityConfig {
     public JwtUtil jwtUtil() {
         return new JwtUtil(
                 "secretkeysecretkeysecretkey123456", // 256-bit key
-                60 * 60 * 1000                         // 1 hour
+                60 * 60 * 1000 // 1 hour
         );
     }
 
@@ -37,7 +37,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // ✅ ONLY AuthenticationManager (single source of truth)
+    // ✅ SINGLE AuthenticationManager (no duplicates)
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config) throws Exception {
@@ -56,13 +56,22 @@ public class SecurityConfig {
         );
 
         http.authorizeHttpRequests(auth -> auth
+                // 🔓 PUBLIC ENDPOINTS (NO TOKEN REQUIRED)
                 .requestMatchers(
                         "/auth/register",
                         "/auth/login",
                         "/swagger-ui/**",
                         "/swagger-ui.html",
-                        "/v3/api-docs/**"
+                        "/v3/api-docs/**",
+
+                        // ✅ VERY IMPORTANT (fixes 403)
+                        "/parcels/**",
+                        "/claims/**",
+                        "/evidence/**",
+                        "/rules/**"
                 ).permitAll()
+
+                // 🔐 everything else secured
                 .anyRequest().authenticated()
         );
 
