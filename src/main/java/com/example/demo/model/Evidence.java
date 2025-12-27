@@ -11,8 +11,6 @@ public class Evidence {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String fileName;
-    private String fileType;
     private String fileUrl;
 
     private LocalDateTime uploadedAt = LocalDateTime.now();
@@ -21,22 +19,44 @@ public class Evidence {
     @JoinColumn(name = "claim_id")
     private DamageClaim claim;
 
+    // ======================
+    // CONSTRUCTORS
+    // ======================
     public Evidence() {}
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    // ======================
+    // GETTERS & SETTERS
+    // ======================
+    public Long getId() {
+        return id;
+    }
 
-    public String getFileName() { return fileName; }
-    public void setFileName(String fileName) { this.fileName = fileName; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getFileType() { return fileType; }
-    public void setFileType(String fileType) { this.fileType = fileType; }
+    public String getFileUrl() {
+        return fileUrl;
+    }
 
-    public String getFileUrl() { return fileUrl; }
-    public void setFileUrl(String fileUrl) { this.fileUrl = fileUrl; }
+    public void setFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
+    }
 
-    public LocalDateTime getUploadedAt() { return uploadedAt; }
+    public LocalDateTime getUploadedAt() {
+        return uploadedAt;
+    }
 
-    public DamageClaim getClaim() { return claim; }
-    public void setClaim(DamageClaim claim) { this.claim = claim; }
+    // 🔴 THIS SETTER WAS MISSING (CRITICAL)
+    public void setUploadedAt(LocalDateTime uploadedAt) {
+        this.uploadedAt = uploadedAt;
+    }
+
+    public DamageClaim getClaim() {
+        return claim;
+    }
+
+    public void setClaim(DamageClaim claim) {
+        this.claim = claim;
+    }
 }
